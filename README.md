@@ -123,6 +123,10 @@ This package is ready for public repo-marketplace distribution through `getaurac
 
 OpenAI's Codex Plugin Directory has a curated `openai-curated` channel. The public OpenAI docs currently describe repo/personal marketplaces and workspace sharing for third-party distribution; they do not document a self-service submission form for arbitrary third-party plugins. Treat OpenAI-curated listing as a separate partner/submission track, not as the guaranteed install path.
 
+For the curated listing track, see [`OPENAI_CURATED_LISTING_PACKET.md`](OPENAI_CURATED_LISTING_PACKET.md).
+
+Release notes are tracked in [`CHANGELOG.md`](CHANGELOG.md).
+
 ## License
 
 Proprietary - (c) AuraCite.
