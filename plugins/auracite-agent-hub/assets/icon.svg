@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">AuraCite Agent Hub icon</title>
+  <desc id="desc">AuraCite monogram with connected intelligence nodes.</desc>
+  <rect width="128" height="128" rx="28" fill="#08111f"/>
+  <path d="M32 88 58 28h14l26 60H82l-5-13H53l-5 13H32Zm26-26h14l-7-18-7 18Z" fill="#00ffaa"/>
+  <path d="M36 96h56" stroke="#dff7ff" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="32" cy="32" r="8" fill="#ffcc4d"/>
+  <circle cx="96" cy="32" r="8" fill="#58a6ff"/>
+  <circle cx="96" cy="96" r="8" fill="#ff6b6b"/>
+  <path d="M40 34h48M94 40v48M88 94H40" stroke="#dff7ff" stroke-opacity=".55" stroke-width="4" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,47 @@
+{
+  "name": "auracite-agent-hub",
+  "version": "0.8.1",
+  "description": "Connect Codex to AuraCite AI Visibility Intelligence, Action Center handoffs, project memory, and safe agent operating rules.",
+  "author": {
+    "name": "AuraCite",
+    "email": "mohamad@auracite.de",
+    "url": "https://auracite.de"
+  },
+  "homepage": "https://auracite.de",
+  "repository": "https://github.com/getauracite/codex-plugins",
+  "license": "Proprietary",
+  "keywords": [
+    "agentic-bi",
+    "ai-visibility",
+    "geo",
+    "codex",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "AuraCite Agent Hub",
+    "shortDescription": "Read AuraCite AI visibility data and prepare safe action handoffs from Codex.",
+    "longDescription": "AuraCite Agent Hub connects Codex to AuraCite's AI Visibility Intelligence, Action Center handoffs, project memory, and evidence-backed operating rules. It uses the hosted OAuth-capable MCP JSON-RPC endpoint at https://auracite.de/mcp/rpc by default, so users sign in to AuraCite and approve scoped access instead of pasting API keys. Safe read and draft tools are exposed for brand visibility, mentions, citations, share of voice, Intelligence freshness, opportunity briefs, Action Center handoffs, compact project timelines, context-pack drafts, refresh-plan drafts, and approval-note drafts. Mutating, cost-bearing, admin, bulk, publishing, and raw Vault-write tools stay disabled by default. Confirmed writes require mcp:write, exact server-issued confirmation, audit, and idempotency; provider-spend tools additionally require quote approval, hard credit caps, optional USD caps, CostGuard, and explicit confirmation.",
+    "developerName": "AuraCite",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Interactive"
+    ],
+    "websiteURL": "https://auracite.de",
+    "privacyPolicyURL": "https://auracite.de/privacy",
+    "termsOfServiceURL": "https://auracite.de/terms",
+    "composerIcon": "./assets/icon.svg",
+    "logo": "./assets/logo.svg",
+    "defaultPrompt": [
+      "Review AuraCite Intelligence opportunities and prepare a gated Action Center handoff draft.",
+      "Build an AuraCite Context Pack from Intelligence evidence and Vault context.",
+      "Use AuraCite context to plan my next agent task.",
+      "Check stale Intelligence sources and draft a safe refresh plan.",
+      "Review this Codex session for AuraCite follow-ups.",
+      "Turn AuraCite evidence into a safe action plan."
+    ],
+    "brandColor": "#00FFAA"
+  }
+}

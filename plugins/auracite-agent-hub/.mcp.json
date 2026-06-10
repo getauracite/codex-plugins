@@ -1,0 +1,122 @@
+{
+  "mcpServers": {
+    "auracite-jsonrpc-bridge": {
+      "command": "node",
+      "args": [
+        "./bridge/auracite_jsonrpc_bridge.mjs"
+      ],
+      "enabled": false,
+      "env_vars": [
+        "AURACITE_MCP_TOKEN",
+        "AURACITE_MCP_RPC_URL",
+        "AURACITE_MCP_BRIDGE_MODE"
+      ],
+      "env": {
+        "AURACITE_MCP_RPC_URL": "https://auracite.de/mcp/rpc",
+        "AURACITE_MCP_BRIDGE_MODE": "safe"
+      },
+      "default_tools_approval_mode": "prompt",
+      "enabled_tools": [
+        "list_brands",
+        "get_dashboard_stats",
+        "get_crawler_hits",
+        "get_mentions",
+        "get_citations",
+        "list_prompts",
+        "list_competitors",
+        "get_visibility_score",
+        "get_share_of_voice",
+        "get_trend_data",
+        "get_ai_engine_breakdown",
+        "compare_brands",
+        "get_intelligence_overview",
+        "get_intelligence_freshness",
+        "list_intelligence_refresh_candidates",
+        "create_intelligence_refresh_plan_draft",
+        "get_intelligence_refresh_status",
+        "list_intelligence_opportunity_briefs",
+        "get_intelligence_opportunity_brief",
+        "list_action_handoffs",
+        "get_vault_next_actions",
+        "get_project_status",
+        "get_recent_changelog",
+        "get_agent_hub_timeline",
+        "list_project_memory_entries",
+        "create_context_pack_draft",
+        "create_action_handoff_draft",
+        "write_approval_note_draft"
+      ],
+      "disabled_tools": [
+        "add_brand",
+        "delete_brand",
+        "add_prompt",
+        "bulk_add_prompts",
+        "trigger_scan",
+        "generate_ai_prompts",
+        "trigger_intelligence_refresh",
+        "promote_handoff_to_action",
+        "update_action_status",
+        "record_outcome_measurement",
+        "append_project_memory_entry",
+        "create_demo_user",
+        "create_project",
+        "add_credits"
+      ],
+      "startup_timeout_sec": 10,
+      "tool_timeout_sec": 60
+    },
+    "auracite": {
+      "url": "https://auracite.de/mcp/rpc",
+      "enabled": true,
+      "default_tools_approval_mode": "prompt",
+      "enabled_tools": [
+        "list_brands",
+        "get_dashboard_stats",
+        "get_crawler_hits",
+        "get_mentions",
+        "get_citations",
+        "list_prompts",
+        "list_competitors",
+        "get_visibility_score",
+        "get_share_of_voice",
+        "get_trend_data",
+        "get_ai_engine_breakdown",
+        "compare_brands",
+        "get_intelligence_overview",
+        "get_intelligence_freshness",
+        "list_intelligence_refresh_candidates",
+        "create_intelligence_refresh_plan_draft",
+        "get_intelligence_refresh_status",
+        "list_intelligence_opportunity_briefs",
+        "get_intelligence_opportunity_brief",
+        "list_action_handoffs",
+        "get_vault_next_actions",
+        "get_project_status",
+        "get_recent_changelog",
+        "get_agent_hub_timeline",
+        "list_project_memory_entries",
+        "create_context_pack_draft",
+        "create_action_handoff_draft",
+        "write_approval_note_draft"
+      ],
+      "disabled_tools": [
+        "add_brand",
+        "delete_brand",
+        "add_prompt",
+        "bulk_add_prompts",
+        "trigger_scan",
+        "generate_ai_prompts",
+        "trigger_intelligence_refresh",
+        "promote_handoff_to_action",
+        "update_action_status",
+        "record_outcome_measurement",
+        "append_project_memory_entry",
+        "create_demo_user",
+        "create_project",
+        "add_credits"
+      ],
+      "startup_timeout_sec": 10,
+      "tool_timeout_sec": 60
+    }
+  }
+}

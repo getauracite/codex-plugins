@@ -1,0 +1,20 @@
+{
+  "name": "auracite-marketplace",
+  "interface": {
+    "displayName": "AuraCite Plugins"
+  },
+  "plugins": [
+    {
+      "name": "auracite-agent-hub",
+      "source": {
+        "source": "local",
+        "path": "./plugins/auracite-agent-hub"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 128" role="img" aria-labelledby="title desc">
+  <title id="title">AuraCite Agent Hub logo</title>
+  <desc id="desc">AuraCite Agent Hub wordmark with connected intelligence mark.</desc>
+  <rect width="520" height="128" rx="24" fill="#08111f"/>
+  <g transform="translate(24 22)">
+    <rect width="84" height="84" rx="20" fill="#0f2236"/>
+    <path d="M19 61 36 21h12l17 40H52l-3-8H35l-3 8H19Zm19-18h8l-4-11-4 11Z" fill="#00ffaa"/>
+    <circle cx="18" cy="18" r="5" fill="#ffcc4d"/>
+    <circle cx="66" cy="18" r="5" fill="#58a6ff"/>
+    <circle cx="66" cy="66" r="5" fill="#ff6b6b"/>
+    <path d="M24 18h36M66 24v36M60 66H24" stroke="#dff7ff" stroke-opacity=".55" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <text x="128" y="55" fill="#f5fbff" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="700">AuraCite</text>
+  <text x="128" y="88" fill="#9fb6c9" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="500">Agent Hub</text>
+  <path d="M338 43h112M338 67h88M338 91h132" stroke="#00ffaa" stroke-width="6" stroke-linecap="round"/>
+</svg>
