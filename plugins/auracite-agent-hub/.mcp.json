@@ -44,13 +44,15 @@
         "list_project_memory_entries",
         "create_context_pack_draft",
         "create_action_handoff_draft",
-        "write_approval_note_draft"
+        "write_approval_note_draft",
+        "list_projects",
+        "create_project",
+        "add_prompt",
+        "add_brand",
+        "bulk_add_prompts"
       ],
       "disabled_tools": [
-        "add_brand",
         "delete_brand",
-        "add_prompt",
-        "bulk_add_prompts",
         "trigger_scan",
         "generate_ai_prompts",
         "trigger_intelligence_refresh",
@@ -59,7 +61,6 @@
         "record_outcome_measurement",
         "append_project_memory_entry",
         "create_demo_user",
-        "create_project",
         "add_credits"
       ],
       "startup_timeout_sec": 10,
@@ -97,13 +98,15 @@
         "list_project_memory_entries",
         "create_context_pack_draft",
         "create_action_handoff_draft",
-        "write_approval_note_draft"
+        "write_approval_note_draft",
+        "list_projects",
+        "create_project",
+        "add_prompt",
+        "add_brand",
+        "bulk_add_prompts"
       ],
       "disabled_tools": [
-        "add_brand",
         "delete_brand",
-        "add_prompt",
-        "bulk_add_prompts",
         "trigger_scan",
         "generate_ai_prompts",
         "trigger_intelligence_refresh",
@@ -112,7 +115,6 @@
         "record_outcome_measurement",
         "append_project_memory_entry",
         "create_demo_user",
-        "create_project",
         "add_credits"
       ],
       "startup_timeout_sec": 10,

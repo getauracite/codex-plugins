@@ -11,6 +11,7 @@ const SAFE_TOOL_NAMES = new Set([
   "get_mentions",
   "get_citations",
   "list_prompts",
+  "list_projects",
   "list_competitors",
   "get_visibility_score",
   "get_share_of_voice",
@@ -48,13 +49,24 @@ const COST_TOOL_NAMES = new Set([
   "generate_ai_prompts"
 ]);
 
-const ALWAYS_BLOCKED_TOOL_NAMES = new Set([
-  "add_brand",
-  "delete_brand",
-  "add_prompt",
-  "bulk_add_prompts",
-  "create_demo_user",
+// Free, non-destructive write tools: create a project and add tracked
+// prompts/brands. Exposed only in confirmed-writes mode. The AuraCite server
+// still enforces mcp:write scope, but these are zero-touch (no approval quote,
+// no idempotency key) — cheap, reversible config writes, unlike the
+// confirmed-write and cost tools below. The bridge only decides local
+// exposure here; server-side gating lives in tool_policy.go.
+const WRITE_TOOL_NAMES = new Set([
   "create_project",
+  "add_prompt",
+  "add_brand",
+  "bulk_add_prompts"
+]);
+
+// Destructive or admin-only tools stay disabled through the bridge in every
+// mode, regardless of token scope.
+const ALWAYS_BLOCKED_TOOL_NAMES = new Set([
+  "delete_brand",
+  "create_demo_user",
   "add_credits"
 ]);
 
@@ -89,7 +101,10 @@ function isAllowedTool(name, mode = bridgeMode()) {
   if (SAFE_TOOL_NAMES.has(name)) {
     return true;
   }
-  if (mode === "confirmed-writes" && (CONFIRMED_WRITE_TOOL_NAMES.has(name) || COST_TOOL_NAMES.has(name))) {
+  if (
+    mode === "confirmed-writes" &&
+    (CONFIRMED_WRITE_TOOL_NAMES.has(name) || COST_TOOL_NAMES.has(name) || WRITE_TOOL_NAMES.has(name))
+  ) {
     return true;
   }
   return false;
@@ -159,7 +174,7 @@ async function handleRequest(message) {
           version: SERVER_VERSION
         },
         instructions:
-          "AuraCite Agent Hub bridge. Safe mode exposes read and draft tools. Set AURACITE_MCP_BRIDGE_MODE=confirmed-writes to expose confirmed writes and cost tools listed for the token; the AuraCite server still requires mcp:write or mcp:spend, exact confirmation, audit, idempotency, and max_credits caps."
+          "AuraCite Agent Hub bridge. Safe mode exposes read and draft tools. Set AURACITE_MCP_BRIDGE_MODE=confirmed-writes to also expose: free config-write tools (create_project, add_prompt, add_brand, bulk_add_prompts — mcp:write scope only, no approval tap), confirmed-write tools (mcp:write + exact confirmation + idempotency), and cost tools (mcp:spend + one-tap execution approval in AuraCite + max_credits/max_usd caps)."
       };
 
     case "ping":

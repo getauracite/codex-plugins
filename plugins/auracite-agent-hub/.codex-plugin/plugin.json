@@ -1,6 +1,6 @@
 {
   "name": "auracite-agent-hub",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "Connect Codex to AuraCite AI Visibility Intelligence, Action Center handoffs, project memory, and safe agent operating rules.",
   "author": {
     "name": "AuraCite",
