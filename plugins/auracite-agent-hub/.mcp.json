@@ -19,7 +19,6 @@
       "enabled_tools": [
         "list_brands",
         "get_dashboard_stats",
-        "get_crawler_hits",
         "get_mentions",
         "get_citations",
         "list_prompts",
@@ -29,6 +28,14 @@
         "get_trend_data",
         "get_ai_engine_breakdown",
         "compare_brands",
+        "summarize_user_landscape",
+        "list_recent_signups",
+        "get_gsc_search_analytics",
+        "get_gsc_top_queries",
+        "get_gsc_breakdown",
+        "get_gsc_top_pages",
+        "get_gsc_trend",
+        "get_ai_visibility_overview",
         "get_intelligence_overview",
         "get_intelligence_freshness",
         "list_intelligence_refresh_candidates",
@@ -45,11 +52,7 @@
         "create_context_pack_draft",
         "create_action_handoff_draft",
         "write_approval_note_draft",
-        "list_projects",
-        "create_project",
-        "add_prompt",
-        "add_brand",
-        "bulk_add_prompts"
+        "list_projects"
       ],
       "disabled_tools": [
         "delete_brand",
@@ -61,7 +64,11 @@
         "record_outcome_measurement",
         "append_project_memory_entry",
         "create_demo_user",
-        "add_credits"
+        "add_credits",
+        "create_project",
+        "add_prompt",
+        "add_brand",
+        "bulk_add_prompts"
       ],
       "startup_timeout_sec": 10,
       "tool_timeout_sec": 60
@@ -73,7 +80,6 @@
       "enabled_tools": [
         "list_brands",
         "get_dashboard_stats",
-        "get_crawler_hits",
         "get_mentions",
         "get_citations",
         "list_prompts",
@@ -83,6 +89,14 @@
         "get_trend_data",
         "get_ai_engine_breakdown",
         "compare_brands",
+        "summarize_user_landscape",
+        "list_recent_signups",
+        "get_gsc_search_analytics",
+        "get_gsc_top_queries",
+        "get_gsc_breakdown",
+        "get_gsc_top_pages",
+        "get_gsc_trend",
+        "get_ai_visibility_overview",
         "get_intelligence_overview",
         "get_intelligence_freshness",
         "list_intelligence_refresh_candidates",
@@ -99,11 +113,7 @@
         "create_context_pack_draft",
         "create_action_handoff_draft",
         "write_approval_note_draft",
-        "list_projects",
-        "create_project",
-        "add_prompt",
-        "add_brand",
-        "bulk_add_prompts"
+        "list_projects"
       ],
       "disabled_tools": [
         "delete_brand",
@@ -115,7 +125,11 @@
         "record_outcome_measurement",
         "append_project_memory_entry",
         "create_demo_user",
-        "add_credits"
+        "add_credits",
+        "create_project",
+        "add_prompt",
+        "add_brand",
+        "bulk_add_prompts"
       ],
       "startup_timeout_sec": 10,
       "tool_timeout_sec": 60

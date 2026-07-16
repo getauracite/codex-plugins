@@ -12,6 +12,15 @@ const bridgePath = path.join(pluginRoot, "bridge", "auracite_jsonrpc_bridge.mjs"
 
 const remoteRequests = [];
 const remoteTools = [
+  "list_projects",
+  "summarize_user_landscape",
+  "list_recent_signups",
+  "get_gsc_search_analytics",
+  "get_gsc_top_queries",
+  "get_gsc_breakdown",
+  "get_gsc_top_pages",
+  "get_gsc_trend",
+  "get_ai_visibility_overview",
   "get_project_status",
   "get_agent_hub_timeline",
   "get_intelligence_freshness",
@@ -192,6 +201,19 @@ try {
     assert.ok(names.includes("create_intelligence_refresh_plan_draft"));
     assert.ok(names.includes("get_intelligence_refresh_status"));
     assert.ok(names.includes("list_project_memory_entries"));
+    for (const toolName of [
+      "list_projects",
+      "summarize_user_landscape",
+      "list_recent_signups",
+      "get_gsc_search_analytics",
+      "get_gsc_top_queries",
+      "get_gsc_breakdown",
+      "get_gsc_top_pages",
+      "get_gsc_trend",
+      "get_ai_visibility_overview"
+    ]) {
+      assert.ok(names.includes(toolName), `${toolName} should be visible in safe mode`);
+    }
     assert.equal(names.includes("trigger_intelligence_refresh"), false);
     assert.equal(names.includes("update_action_status"), false);
     assert.equal(names.includes("trigger_scan"), false);
@@ -229,6 +251,9 @@ try {
     assert.ok(names.includes("append_project_memory_entry"));
     assert.ok(names.includes("trigger_scan"));
     assert.ok(names.includes("generate_ai_prompts"));
+    for (const toolName of ["create_project", "add_prompt", "add_brand", "bulk_add_prompts", "delete_brand", "create_demo_user", "add_credits"]) {
+      assert.equal(names.includes(toolName), false, `${toolName} must remain permanently blocked`);
+    }
 
     const write = await client.request("tools/call", {
       name: "update_action_status",
@@ -245,6 +270,12 @@ try {
     assert.equal(spend.error, undefined);
     const spendBody = JSON.parse(spend.result.content[0].text);
     assert.equal(spendBody.proxied_tool, "generate_ai_prompts");
+
+    const blockedConfigWrite = await client.request("tools/call", {
+      name: "create_project",
+      arguments: { name: "must-not-run" }
+    });
+    assert.match(blockedConfigWrite.error.message, /disabled by local bridge/i);
     await client.close();
   }
 

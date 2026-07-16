@@ -165,6 +165,9 @@ $bearerCallPassed = $false
 $revokedBearerRejected = $false
 $challengeAdvertised = $false
 $toolsCount = 0
+$toolNames = @()
+$oauthReadCallsPassed = $false
+$oauthReadToolsCalled = @()
 $tenantID = $null
 $projectID = $null
 $loginAccessToken = $null
@@ -301,7 +304,45 @@ try {
     throw "MCP tools/list failed through OAuth bearer: $($toolsResponse.error.message)"
   }
   $bearerCallPassed = $true
-  $toolsCount = @($toolsResponse.result.tools).Count
+  $toolNames = @($toolsResponse.result.tools | ForEach-Object { $_.name })
+  $toolsCount = $toolNames.Count
+
+  # Exercise bounded, stored-data reads through the OAuth bearer itself. These
+  # calls must not trigger provider work, credits, or production mutation.
+  $oauthReadChecks = @(
+    @{ name = 'get_project_status'; arguments = @{} },
+    @{ name = 'get_intelligence_freshness'; arguments = @{} },
+    @{ name = 'get_gsc_search_analytics'; arguments = @{ days = 30; limit = 5 } },
+    @{ name = 'get_gsc_top_queries'; arguments = @{ days = 30; limit = 5 } },
+    @{ name = 'get_gsc_breakdown'; arguments = @{ dimension = 'country'; days = 30; limit = 5 } },
+    @{ name = 'get_gsc_top_pages'; arguments = @{ days = 30; limit = 5 } },
+    @{ name = 'get_gsc_trend'; arguments = @{ days = 28; limit = 5 } },
+    @{ name = 'get_ai_visibility_overview'; arguments = @{ days = 30 } }
+  )
+  foreach ($check in $oauthReadChecks) {
+    if ($toolNames -notcontains $check.name) {
+      throw "OAuth tools/list did not expose required read tool '$($check.name)'."
+    }
+    $readResponse = Invoke-AuraCiteJson `
+      -Method Post `
+      -Url $resource `
+      -Body @{
+        jsonrpc = '2.0'
+        id = 'oauth-read-' + $check.name
+        method = 'tools/call'
+        params = @{
+          name = $check.name
+          arguments = $check.arguments
+        }
+      } `
+      -Headers @{ Authorization = "Bearer $accessToken" }
+
+    if ($null -ne $readResponse.error) {
+      throw "OAuth read '$($check.name)' failed: $($readResponse.error.message)"
+    }
+    $oauthReadToolsCalled += $check.name
+  }
+  $oauthReadCallsPassed = $true
 }
 finally {
   $plainPassword = $null
@@ -350,6 +391,9 @@ if (-not [string]::IsNullOrWhiteSpace($accessToken)) {
   OAuthTokenIssued = $oauthTokenIssued
   BearerToolsListPassed = $bearerCallPassed
   ToolsListCount = $toolsCount
+  VisibleToolNames = ($toolNames -join ',')
+  OAuthReadCallsPassed = $oauthReadCallsPassed
+  OAuthReadToolsCalled = ($oauthReadToolsCalled -join ',')
   OAuthTokenRevoked = $oauthTokenRevoked
   RevokedBearerRejected = $revokedBearerRejected
   OAuthChallengeAdvertised = $challengeAdvertised

@@ -1,6 +1,35 @@
 # Changelog
 
+## v0.10.0 - 2026-07-16
+
+Enterprise read-surface and governance release.
+
+### Added
+
+- Production-aligned safe reads for project discovery, user-landscape summaries, recent signups,
+  all six bounded GSC reads, and the combined AI-visibility overview.
+- Bundled `ai-visibility` skill for evidence-first GEO/GSC answers.
+- OAuth dogfood now exercises bounded read calls through the PKCE bearer, not only `tools/list`.
+
+### Changed
+
+- Project/brand/prompt mutations remain blocked by the hosted package and local bridge until the
+  production server enforces exact confirmation, audit, tenant/project scope, and idempotency for
+  each call. `mcp:write` scope alone is not treated as approval.
+- Removed the stale `get_crawler_hits` package entry because it is not exposed by the production
+  MCP resource used by the plugin.
+
+### Verification
+
+- OAuth/PKCE default-project flow passed against `https://auracite.de`: 36 safe tools visible, eight
+  bounded read calls passed, OAuth bearer revoked, revoked bearer rejected, and OAuth challenge
+  advertised. No provider calls, credits, or business mutations.
+- Local validator, bridge unit smoke, and enterprise blocked-tool assertions pass.
+
 ## v0.9.0 - 2026-07-14
+
+Superseded by v0.10.0: the zero-touch config-write exposure described below is no longer part of
+the enterprise package or bridge contract.
 
 Adds free config-write tools to the bridge's `confirmed-writes` mode.
 

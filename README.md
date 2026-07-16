@@ -34,6 +34,8 @@ Start with `mcp:read`. Confirmed writes and provider-spend workflows are not ena
 ## What The Plugin Can Do
 
 - Read AI visibility signals for brands, mentions, citations, competitors, share of voice, visibility score, trends, and per-engine breakdowns.
+- Read project discovery, user-landscape summaries, recent signups, Google Search Console query/page
+  evidence, bounded country/device breakdowns, query trends, and the combined AI-visibility overview.
 - Read AuraCite Intelligence context: freshness, refresh candidates, refresh status, opportunity briefs, and evidence summaries.
 - Read Action Center handoff state and compact project-memory snapshots.
 - Draft context packs, refresh plans, handoffs, and approval notes without changing production state.
@@ -52,6 +54,9 @@ Disabled by default:
 - Action Center status writes
 - Project-memory append writes
 - Admin, billing, demo-user, credit, publishing, and raw Vault file-write tools
+
+Project/brand/prompt writes remain blocked by the plugin until the production server exposes the
+same exact-confirmation, audit, scope, and idempotency contract used by other enterprise writes.
 
 Confirmed writes require:
 

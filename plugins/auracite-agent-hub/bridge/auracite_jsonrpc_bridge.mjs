@@ -7,17 +7,25 @@ const SERVER_VERSION = "0.1.0";
 
 const SAFE_TOOL_NAMES = new Set([
   "list_brands",
+  "list_projects",
   "get_dashboard_stats",
   "get_mentions",
   "get_citations",
   "list_prompts",
-  "list_projects",
   "list_competitors",
   "get_visibility_score",
   "get_share_of_voice",
   "get_trend_data",
   "get_ai_engine_breakdown",
   "compare_brands",
+  "summarize_user_landscape",
+  "list_recent_signups",
+  "get_gsc_search_analytics",
+  "get_gsc_top_queries",
+  "get_gsc_breakdown",
+  "get_gsc_top_pages",
+  "get_gsc_trend",
+  "get_ai_visibility_overview",
   "get_intelligence_overview",
   "get_intelligence_freshness",
   "list_intelligence_refresh_candidates",
@@ -49,22 +57,14 @@ const COST_TOOL_NAMES = new Set([
   "generate_ai_prompts"
 ]);
 
-// Free, non-destructive write tools: create a project and add tracked
-// prompts/brands. Exposed only in confirmed-writes mode. The AuraCite server
-// still enforces mcp:write scope, but these are zero-touch (no approval quote,
-// no idempotency key) — cheap, reversible config writes, unlike the
-// confirmed-write and cost tools below. The bridge only decides local
-// exposure here; server-side gating lives in tool_policy.go.
-const WRITE_TOOL_NAMES = new Set([
+// Config, destructive, and admin tools stay disabled until the production
+// server enforces the enterprise confirmation/idempotency contract. Scope
+// alone is not approval.
+const ALWAYS_BLOCKED_TOOL_NAMES = new Set([
   "create_project",
   "add_prompt",
   "add_brand",
-  "bulk_add_prompts"
-]);
-
-// Destructive or admin-only tools stay disabled through the bridge in every
-// mode, regardless of token scope.
-const ALWAYS_BLOCKED_TOOL_NAMES = new Set([
+  "bulk_add_prompts",
   "delete_brand",
   "create_demo_user",
   "add_credits"
@@ -103,7 +103,7 @@ function isAllowedTool(name, mode = bridgeMode()) {
   }
   if (
     mode === "confirmed-writes" &&
-    (CONFIRMED_WRITE_TOOL_NAMES.has(name) || COST_TOOL_NAMES.has(name) || WRITE_TOOL_NAMES.has(name))
+    (CONFIRMED_WRITE_TOOL_NAMES.has(name) || COST_TOOL_NAMES.has(name))
   ) {
     return true;
   }
@@ -174,7 +174,7 @@ async function handleRequest(message) {
           version: SERVER_VERSION
         },
         instructions:
-          "AuraCite Agent Hub bridge. Safe mode exposes read and draft tools. Set AURACITE_MCP_BRIDGE_MODE=confirmed-writes to also expose: free config-write tools (create_project, add_prompt, add_brand, bulk_add_prompts — mcp:write scope only, no approval tap), confirmed-write tools (mcp:write + exact confirmation + idempotency), and cost tools (mcp:spend + one-tap execution approval in AuraCite + max_credits/max_usd caps)."
+          "AuraCite Agent Hub bridge. Safe mode exposes read and draft tools. Set AURACITE_MCP_BRIDGE_MODE=confirmed-writes only for server-confirmed writes (mcp:write + exact confirmation + idempotency) and cost tools (mcp:spend + one-tap execution approval + max_credits/max_usd caps). Config, destructive, admin, and publishing tools remain blocked until their enterprise server contract is live."
       };
 
     case "ping":
