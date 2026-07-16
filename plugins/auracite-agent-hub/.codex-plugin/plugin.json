@@ -1,7 +1,7 @@
 {
   "name": "auracite-agent-hub",
-  "version": "0.10.0",
-  "description": "Connect Codex to AuraCite AI Visibility Intelligence, Google Search Console evidence, Action Center handoffs, project memory, and enterprise-safe agent operating rules.",
+  "version": "0.11.0",
+  "description": "Connect Codex to AuraCite AI Visibility Intelligence, Google Search Console evidence, project operations, approved writes, spend-capped workflows, and enterprise-safe agent operating rules.",
   "author": {
     "name": "AuraCite",
     "email": "mohamad@auracite.de",
@@ -21,12 +21,13 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "AuraCite Agent Hub",
-    "shortDescription": "Read AuraCite AI visibility data and prepare safe action handoffs from Codex.",
-    "longDescription": "AuraCite Agent Hub connects Codex to AuraCite's AI Visibility Intelligence, Google Search Console evidence, Action Center handoffs, project memory, and evidence-backed operating rules. It uses the hosted OAuth-capable MCP JSON-RPC endpoint at https://auracite.de/mcp/rpc by default, so users sign in to AuraCite and approve scoped access instead of pasting API keys. Safe read and draft tools are exposed for brand/project visibility, mentions, citations, GSC query/page evidence, combined AI-visibility snapshots, Intelligence freshness, opportunity briefs, Action Center handoffs, compact project timelines, context-pack drafts, refresh-plan drafts, and approval-note drafts. Mutating, cost-bearing, admin, bulk, publishing, and raw Vault-write tools stay disabled by default. Any future confirmed write requires mcp:write, exact server-issued confirmation, audit, and idempotency; provider-spend tools additionally require quote approval, hard credit caps, optional USD caps, CostGuard, and explicit confirmation.",
+    "shortDescription": "Operate AuraCite from Codex with scoped reads, approved writes, and spend-capped workflows.",
+    "longDescription": "AuraCite Agent Hub connects Codex to AuraCite's AI Visibility Intelligence, Google Search Console evidence, project configuration, Action Center, project memory, and evidence-backed operating rules. It uses the hosted OAuth-capable MCP JSON-RPC endpoint at https://auracite.de/mcp/rpc by default, so users sign in to AuraCite and approve scoped access instead of pasting API keys. Read and draft tools cover visibility, GSC, Intelligence, Action Center, memory, and project context. With mcp:write, Codex can request approval-gated project, brand, prompt, memory, Action Center, and stored-rescore writes; the first call creates a tenant/project/API-key-bound pending approval, and the approved retry is one-use and idempotent. With mcp:spend, Codex can request provider scans or AI prompt generation with hard credit/USD caps and CostGuard. Admin, destructive, credit-grant, demo-user, publishing, and raw Vault-file writes remain blocked.",
     "developerName": "AuraCite",
     "category": "Productivity",
     "capabilities": [
       "Read",
+      "Write",
       "Interactive"
     ],
     "websiteURL": "https://auracite.de",

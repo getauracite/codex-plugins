@@ -37,54 +37,89 @@ function Invoke-AuraCiteMCP {
   return $response.result
 }
 
-function Get-ToolTextBody {
-  param([object]$Result)
+function Assert-PendingApproval {
+  param(
+    [object]$Result,
+    [string]$ToolName
+  )
 
-  $content = @($Result.content)
-  if ($content.Count -eq 0 -or [string]::IsNullOrWhiteSpace($content[0].text)) {
-    throw 'MCP tool result did not contain a text payload.'
+  if ($Result.approval_required -ne $true) {
+    throw "$ToolName did not return approval_required=true: $($Result | ConvertTo-Json -Depth 8 -Compress)"
   }
-  return $content[0].text | ConvertFrom-Json
+  if ([string]::IsNullOrWhiteSpace([string]$Result.quote_id)) {
+    throw "$ToolName did not return a pending quote_id."
+  }
+  if ([string]$Result.approval_url -ne 'https://auracite.de/approvals') {
+    throw "$ToolName returned an unexpected approval URL."
+  }
+  if ($Result.mutation_performed -eq $true -or $Result.provider_calls_triggered -gt 0 -or $Result.credits_charged -gt 0) {
+    throw "$ToolName performed a side effect while awaiting approval."
+  }
 }
 
-$idempotencyKey = 'safe-deny-smoke-2026-05-22'
 $opportunityId = '00000000-0000-0000-0000-00000000b501'
 $runId = '00000000-0000-0000-0000-00000000a501'
 
 $checks = @(
   @{
+    name = 'create_project'
+    arguments = @{
+      name = 'Approval-gated smoke project'
+      idempotency_key = 'safe-deny-smoke-create-project-20260716'
+    }
+  },
+  @{
+    name = 'add_brand'
+    arguments = @{
+      name = 'Approval-gated smoke brand'
+      domain = 'approval-smoke.example'
+      idempotency_key = 'safe-deny-smoke-add-brand-20260716'
+    }
+  },
+  @{
+    name = 'add_prompt'
+    arguments = @{
+      text = 'Approval-gated smoke prompt'
+      topic = 'smoke'
+      idempotency_key = 'safe-deny-smoke-add-prompt-20260716'
+    }
+  },
+  @{
+    name = 'bulk_add_prompts'
+    arguments = @{
+      prompts = '[{"text":"Approval-gated smoke prompt","topic":"smoke"}]'
+      idempotency_key = 'safe-deny-smoke-bulk-add-prompts-20260716'
+    }
+  },
+  @{
     name = 'promote_handoff_to_action'
     arguments = @{
       opportunity_id = $opportunityId
-      idempotency_key = $idempotencyKey
+      idempotency_key = 'safe-deny-smoke-promote-20260716'
     }
-    expected = "CONFIRM: promote_handoff_to_action $opportunityId $idempotencyKey"
   },
   @{
     name = 'update_action_status'
     arguments = @{
       run_id = $runId
       status = 'implemented'
-      idempotency_key = $idempotencyKey
+      idempotency_key = 'safe-deny-smoke-status-20260716'
     }
-    expected = "CONFIRM: update_action_status $runId implemented $idempotencyKey"
   },
   @{
     name = 'record_outcome_measurement'
     arguments = @{
       run_id = $runId
       outcome_metrics = @{ safe_denied_smoke = 1 }
-      idempotency_key = $idempotencyKey
+      idempotency_key = 'safe-deny-smoke-measure-20260716'
     }
-    expected = "CONFIRM: record_outcome_measurement $runId $idempotencyKey"
   },
   @{
     name = 'trigger_intelligence_refresh'
     arguments = @{
       refresh_type = 'stored_rescore'
-      idempotency_key = $idempotencyKey
+      idempotency_key = 'safe-deny-smoke-refresh-20260716'
     }
-    expected = "CONFIRM: trigger_intelligence_refresh stored_rescore $idempotencyKey"
   }
 )
 
@@ -96,19 +131,7 @@ foreach ($check in $checks) {
   } -Id $requestId
   $requestId++
 
-  $body = Get-ToolTextBody -Result $result
-  if ($body.mutation_performed -ne $false) {
-    throw "$($check.name) unexpectedly reported mutation_performed=true."
-  }
-  if ($body.approval_gate -ne 'exact_confirmation_required') {
-    throw "$($check.name) did not require exact confirmation. approval_gate=$($body.approval_gate)"
-  }
-  if ($body.required_confirmation -ne $check.expected) {
-    throw "$($check.name) returned an unexpected confirmation string."
-  }
-  if ($body.provider_calls_triggered -ne 0 -or $body.credits_charged -ne 0) {
-    throw "$($check.name) reported provider calls or credit charges on denied preview."
-  }
+  Assert-PendingApproval -Result $result -ToolName $check.name
 }
 
-Write-Host 'AuraCite Agent Hub JSON-RPC confirmed-write deny smoke passed: no mutations, no provider calls, no credits charged.'
+Write-Host 'AuraCite Agent Hub JSON-RPC approval-pending smoke passed: no business mutations, provider calls, or credits charged before approval.'

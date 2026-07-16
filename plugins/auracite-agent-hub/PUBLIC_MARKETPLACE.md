@@ -49,7 +49,7 @@ They do not document a self-service submission form for arbitrary third-party pl
 - README and customer install guide are OAuth-first.
 - Hosted MCP uses `https://auracite.de/mcp/rpc`.
 - Manual bridge stays disabled by default and safe-mode only unless explicitly enabled.
-- Mutating, provider-spend, admin, bulk, publishing, and raw Vault-write tools stay disabled by default.
+- Safe mode hides mutating and provider-spend tools by default. Confirmed-writes mode exposes useful writes and spend workflows behind AuraCite's server-side quote, scope, audit, idempotency, and cost gates; destructive/admin, publishing, and raw Vault-write tools remain blocked.
 - Validation passes:
 
 ```powershell

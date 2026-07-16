@@ -75,9 +75,10 @@ Every Action Handoff draft must carry:
 ## Configuration Mutation Boundary
 
 `create_project`, `add_prompt`, `add_brand`, and `bulk_add_prompts` are production mutations even
-when they are free or reversible. This package keeps them blocked until the production server
-enforces exact confirmation, audit, tenant/project scope, and idempotency replay protection for
-each call. Never treat `mcp:write`, bridge mode, or a broad conversation instruction as approval.
+when they are free or reversible. In confirmed-writes mode the package exposes them only because
+the production server binds each request to tenant/project/API-key scope, creates a pending quote,
+requires project-member approval, consumes the quote once, audits the lifecycle, and enforces
+idempotency. Never treat `mcp:write`, bridge mode, or a broad conversation instruction as approval.
 `list_projects` is read-only and available in safe mode.
 
 ## Phase 3 - Confirmed Writes
@@ -97,6 +98,8 @@ Codex bridge requirement:
 - Set `AURACITE_MCP_BRIDGE_MODE=confirmed-writes`.
 - Use an API key scoped for `mcp:write`.
 - Keep the plugin MCP server approval mode prompting before the call.
+- Supply a fresh idempotency key; the first call should return a pending quote rather than mutate.
+- After the project member approves the quote in AuraCite, retry the identical call with `quote_id`.
 
 Before a confirmed write, verify:
 

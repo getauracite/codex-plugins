@@ -36,6 +36,12 @@ const remoteTools = [
   "append_project_memory_entry",
   "trigger_scan",
   "generate_ai_prompts",
+  "create_project",
+  "add_prompt",
+  "add_brand",
+  "bulk_add_prompts",
+  "delete_brand",
+  "create_demo_user",
   "add_credits"
 ].map((name) => ({
   name,
@@ -217,6 +223,7 @@ try {
     assert.equal(names.includes("trigger_intelligence_refresh"), false);
     assert.equal(names.includes("update_action_status"), false);
     assert.equal(names.includes("trigger_scan"), false);
+    assert.equal(names.includes("create_project"), false);
 
     const read = await client.request("tools/call", {
       name: "get_project_status",
@@ -251,7 +258,10 @@ try {
     assert.ok(names.includes("append_project_memory_entry"));
     assert.ok(names.includes("trigger_scan"));
     assert.ok(names.includes("generate_ai_prompts"));
-    for (const toolName of ["create_project", "add_prompt", "add_brand", "bulk_add_prompts", "delete_brand", "create_demo_user", "add_credits"]) {
+    for (const toolName of ["create_project", "add_prompt", "add_brand", "bulk_add_prompts"]) {
+      assert.ok(names.includes(toolName), `${toolName} should be visible in confirmed-writes mode`);
+    }
+    for (const toolName of ["delete_brand", "create_demo_user", "add_credits"]) {
       assert.equal(names.includes(toolName), false, `${toolName} must remain permanently blocked`);
     }
 
@@ -271,11 +281,13 @@ try {
     const spendBody = JSON.parse(spend.result.content[0].text);
     assert.equal(spendBody.proxied_tool, "generate_ai_prompts");
 
-    const blockedConfigWrite = await client.request("tools/call", {
-      name: "create_project",
-      arguments: { name: "must-not-run" }
+    const configWrite = await client.request("tools/call", {
+      name: "add_brand",
+      arguments: { project_id: "project-1", name: "approved-brand", idempotency_key: "idem-1" }
     });
-    assert.match(blockedConfigWrite.error.message, /disabled by local bridge/i);
+    assert.equal(configWrite.error, undefined);
+    const configBody = JSON.parse(configWrite.result.content[0].text);
+    assert.equal(configBody.proxied_tool, "add_brand");
     await client.close();
   }
 

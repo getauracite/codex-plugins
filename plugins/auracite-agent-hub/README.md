@@ -1,8 +1,8 @@
 # AuraCite Agent Hub for Codex
 
-Connect Codex to [AuraCite](https://auracite.de) AI visibility intelligence: brand mentions, citations, share of voice, visibility scores, competitors, Google Search Console signals, Intelligence freshness, opportunity briefs, Action Center handoffs, and project memory.
+Connect Codex to [AuraCite](https://auracite.de) as a scoped operator: AI visibility intelligence, Google Search Console signals, project/brand/prompt configuration, Intelligence, Action Center, project memory, and spend-capped provider workflows.
 
-The normal install path is OAuth-first. Install the plugin, sign in to AuraCite, approve scoped access, and start with read-only tools. No API key needs to be pasted into a repo, README, chat, or screenshot.
+The normal install path is OAuth-first. Install the plugin, sign in to AuraCite, approve scoped access, and start with read/draft tools. When you grant `mcp:write` or `mcp:spend`, Codex can request useful mutations and provider runs; AuraCite still requires a human approval quote before execution. No API key needs to be pasted into a repo, README, chat, or screenshot.
 
 ## Install From The Public Marketplace Repo
 
@@ -29,7 +29,7 @@ https://auracite.de/mcp/rpc
 
 Codex discovers AuraCite OAuth metadata, opens the browser, and asks you to sign in and approve the tenant, project, and scopes. The issued MCP token is scoped, revocable, rate-limited, and bound to the same server-side tenant/project/user controls as AuraCite API keys.
 
-Start with `mcp:read`. Confirmed writes and provider-spend workflows are not enabled by default.
+Start with `mcp:read`. Add `mcp:write` for project, brand, prompt, memory, Action Center, and stored-rescore operations. Add `mcp:spend` only when provider scans or AI prompt generation are needed.
 
 ## What The Plugin Can Do
 
@@ -39,6 +39,8 @@ Start with `mcp:read`. Confirmed writes and provider-spend workflows are not ena
 - Read AuraCite Intelligence context: freshness, refresh candidates, refresh status, opportunity briefs, and evidence summaries.
 - Read Action Center handoff state and compact project-memory snapshots.
 - Draft context packs, refresh plans, handoffs, and approval notes without changing production state.
+- Request approval-gated project, brand, prompt, bulk-prompt, memory, Action Center, and stored-rescore writes. The server creates a pending request first; after approval the retry is quote-bound and idempotent.
+- Request provider scans and AI prompt generation with explicit credit caps, optional USD caps, and server-side CostGuard enforcement.
 - Guide Codex through safe AuraCite operating workflows with bundled skills.
 
 The bundled `ai-visibility` skill helps Codex answer direct GEO and GSC questions from the `auracite`
@@ -46,25 +48,22 @@ MCP server. It is read-only and does not trigger scans, provider calls, or credi
 
 ## Safety Model
 
-Read and draft tools are the default.
+Read and draft tools are the default. The local bridge uses `safe` mode by default; set `AURACITE_MCP_BRIDGE_MODE=confirmed-writes` only when the OAuth/API-key scope and human approval flow are intended.
 
-Disabled by default:
+Always blocked:
 
-- Brand/project mutation
-- Bulk prompt creation
-- Provider scans and provider-spend tools
-- Intelligence `stored_rescore`
-- Action Center status writes
-- Project-memory append writes
-- Admin, billing, demo-user, credit, publishing, and raw Vault file-write tools
+- Destructive brand deletion
+- Demo-user creation
+- Credit grants and other admin/billing actions
+- Publishing and raw Vault file writes
 
-Confirmed writes require:
+Approval-gated writes require:
 
 - `mcp:write`
-- Exact server-issued confirmation text
-- Server-side idempotency/replay checks
-- Audit events
-- Explicit tenant/project/user scope
+- A first call with an idempotency key creates a pending server-side approval
+- Tenant/project/API-key-bound quote approval
+- One-use quote consumption and server-side idempotency/replay checks
+- Audit events and explicit tenant/project/user scope
 
 Provider-spend tools additionally require:
 
@@ -73,7 +72,7 @@ Provider-spend tools additionally require:
 - Hard `max_credits`
 - Optional `max_usd`
 - CostGuard enforcement
-- Explicit confirmation
+- Explicit approval before any provider call
 
 ## Manual Fallback
 

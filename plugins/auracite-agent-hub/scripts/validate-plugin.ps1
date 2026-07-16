@@ -55,7 +55,7 @@ $manifest = Get-Content -Raw -LiteralPath $manifestPath | ConvertFrom-Json
 if ($manifest.name -ne 'auracite-agent-hub') {
   throw "Unexpected plugin name: $($manifest.name)"
 }
-if ($manifest.version -ne '0.10.0') {
+if ($manifest.version -ne '0.11.0') {
   throw "Unexpected plugin version: $($manifest.version)"
 }
 if ($manifest.repository -ne 'https://github.com/getauracite/codex-plugins') {
@@ -80,8 +80,9 @@ if ($null -eq $mcpServers) {
 }
 $enabledTools = @($mcpServers.auracite.enabled_tools)
 $expectedProductionReadToolCount = 36
-if ($enabledTools.Count -ne $expectedProductionReadToolCount) {
-  throw "Hosted enabled_tools must match the verified production read surface ($expectedProductionReadToolCount), found $($enabledTools.Count)."
+$expectedProductionOperatorToolCount = 47
+if ($enabledTools.Count -ne $expectedProductionOperatorToolCount) {
+  throw "Hosted enabled_tools must match the verified operator surface ($expectedProductionOperatorToolCount), found $($enabledTools.Count)."
 }
 $staleTools = @('get_crawler_hits')
 if (@($staleTools | Where-Object { $enabledTools -contains $_ }).Count -gt 0) {
@@ -121,12 +122,8 @@ if ($missingTools.Count -gt 0) {
 
 $disabledTools = @($mcpServers.auracite.disabled_tools)
 $requiredDisabledTools = @(
-  'trigger_intelligence_refresh',
-  'promote_handoff_to_action',
-  'update_action_status',
-  'record_outcome_measurement',
-  'append_project_memory_entry',
-  'trigger_scan',
+  'delete_brand',
+  'create_demo_user',
   'add_credits'
 )
 $missingDisabledTools = @($requiredDisabledTools | Where-Object { $disabledTools -notcontains $_ })
@@ -134,7 +131,7 @@ if ($missingDisabledTools.Count -gt 0) {
   throw "Missing write/cost/admin tools from .mcp.json disabled_tools: $($missingDisabledTools -join ', ')"
 }
 
-$enterpriseBlockedTools = @('create_project', 'add_prompt', 'add_brand', 'bulk_add_prompts', 'delete_brand', 'create_demo_user', 'add_credits')
+$enterpriseBlockedTools = @('delete_brand', 'create_demo_user', 'add_credits')
 $unexpectedEnabledTools = @($enterpriseBlockedTools | Where-Object { $enabledTools -contains $_ })
 if ($unexpectedEnabledTools.Count -gt 0) {
   throw "Enterprise safety violation: mutation/admin tools must not be enabled by default: $($unexpectedEnabledTools -join ', ')"
@@ -172,8 +169,8 @@ if ($bridge.env.AURACITE_MCP_BRIDGE_MODE -ne 'safe') {
 }
 
 $bridgeEnabledTools = @($bridge.enabled_tools)
-if ($bridgeEnabledTools.Count -ne $expectedProductionReadToolCount) {
-  throw "Bridge enabled_tools must match the verified production read surface ($expectedProductionReadToolCount), found $($bridgeEnabledTools.Count)."
+if ($bridgeEnabledTools.Count -ne $expectedProductionOperatorToolCount) {
+  throw "Bridge enabled_tools must match the verified operator surface ($expectedProductionOperatorToolCount), found $($bridgeEnabledTools.Count)."
 }
 $bridgeStaleTools = @($staleTools | Where-Object { $bridgeEnabledTools -contains $_ })
 if ($bridgeStaleTools.Count -gt 0) {

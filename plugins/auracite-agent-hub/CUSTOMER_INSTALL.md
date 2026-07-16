@@ -5,7 +5,7 @@ Last updated: 2026-06-10
 
 ## Purpose
 
-AuraCite Agent Hub lets Codex read AuraCite AI Visibility Intelligence, opportunity briefs, Action Center handoffs, project-memory snapshots, server-side memory entries, and the compact Agent Hub timeline. It can prepare drafts and plans while production-changing actions stay behind explicit server-side confirmation and scoped authorization.
+AuraCite Agent Hub lets Codex read and operate AuraCite AI Visibility Intelligence, opportunity briefs, Action Center handoffs, project configuration, project-memory entries, and the compact Agent Hub timeline. It can prepare drafts and request useful writes or provider runs while production-changing actions stay behind explicit server-side approval and scoped authorization.
 
 ## Prerequisites
 
@@ -43,7 +43,7 @@ Codex discovers AuraCite OAuth metadata, opens AuraCite in the browser, and asks
 
 Start pilots with `mcp:read`.
 
-Use `mcp:write` only for a scheduled write smoke with exact confirmation and idempotency.
+Use `mcp:write` for project, brand, prompt, memory, Action Center, and stored-rescore operations. The first call creates a pending approval; after a project member approves it, Codex retries with the one-use quote and idempotency key.
 
 Use `mcp:spend` only for a scheduled cost-bearing run with a server quote, required `max_credits`, optional `max_usd`, CostGuard, and explicit confirmation.
 
@@ -61,7 +61,7 @@ Expected behavior:
 
 - Read-only tools work after OAuth.
 - Draft tools can create context packs, refresh-plan drafts, handoff drafts, and approval-note drafts.
-- Mutation, provider-spend, admin, bulk, publishing, and raw Vault-write tools stay unavailable by default.
+- Safe mode keeps all mutations and provider-spend tools unavailable. Confirmed-writes mode exposes the useful write and spend tools, while AuraCite still blocks execution until the server-side approval quote is approved.
 
 ## Manual Fallback
 
@@ -83,9 +83,7 @@ enabled = true
 default_tools_approval_mode = "prompt"
 ```
 
-Safe mode exposes read and draft-only tools. Confirmed-writes mode (`AURACITE_MCP_BRIDGE_MODE=confirmed-writes`) exposes only tools whose server contract requires `mcp:write`, exact confirmation, audit, and idempotency replay checks.
-
-Project/brand/prompt mutations (`create_project`, `add_prompt`, `add_brand`, `bulk_add_prompts`) remain blocked by this package until that same enterprise server contract is live for them. A `mcp:write` scope or bridge mode is never approval by itself. Destructive/admin tools (`delete_brand`, `create_demo_user`, `add_credits`) stay disabled through the bridge in every mode. Cost-bearing runs (`trigger_scan`, `generate_ai_prompts`) additionally require `mcp:spend`, a server-created execution quote approved once in AuraCite, a max credit cap, and the exact confirmation text.
+Safe mode exposes read and draft-only tools. Confirmed-writes mode (`AURACITE_MCP_BRIDGE_MODE=confirmed-writes`) exposes useful writes and spend tools, but a `mcp:write`/`mcp:spend` scope or bridge mode is never approval by itself: the server creates a tenant/project/API-key-bound pending quote, requires approval, consumes it once, and enforces idempotency. Destructive/admin tools (`delete_brand`, `create_demo_user`, `add_credits`) stay disabled through the bridge in every mode. Cost-bearing runs (`trigger_scan`, `generate_ai_prompts`) additionally require `mcp:spend`, a server-created execution quote approved once in AuraCite, a max credit cap, optional USD cap, and CostGuard.
 
 Run the fallback health check:
 
@@ -110,7 +108,7 @@ Internal AuraCite operators can use the production dogfood helpers in `scripts/`
 - OAuth succeeds without asking the user to paste a token.
 - Read-only Intelligence, project status, and timeline tools return useful context.
 - Draft tools produce useful handoff material without mutating production.
-- Disabled tools remain unavailable by default.
+- Admin/destructive tools remain unavailable in every mode; safe mode hides all writes and spend tools by default.
 - The user can revoke the connection and the plugin fails closed afterward.
 - Feedback is captured as concrete backlog items.
 

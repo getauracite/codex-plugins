@@ -52,23 +52,23 @@
         "create_context_pack_draft",
         "create_action_handoff_draft",
         "write_approval_note_draft",
-        "list_projects"
-      ],
-      "disabled_tools": [
-        "delete_brand",
-        "trigger_scan",
-        "generate_ai_prompts",
-        "trigger_intelligence_refresh",
+        "list_projects",
+        "append_project_memory_entry",
         "promote_handoff_to_action",
         "update_action_status",
         "record_outcome_measurement",
-        "append_project_memory_entry",
-        "create_demo_user",
-        "add_credits",
+        "trigger_intelligence_refresh",
+        "trigger_scan",
+        "generate_ai_prompts",
         "create_project",
         "add_prompt",
         "add_brand",
         "bulk_add_prompts"
+      ],
+      "disabled_tools": [
+        "delete_brand",
+        "create_demo_user",
+        "add_credits"
       ],
       "startup_timeout_sec": 10,
       "tool_timeout_sec": 60
@@ -113,23 +113,23 @@
         "create_context_pack_draft",
         "create_action_handoff_draft",
         "write_approval_note_draft",
-        "list_projects"
-      ],
-      "disabled_tools": [
-        "delete_brand",
-        "trigger_scan",
-        "generate_ai_prompts",
-        "trigger_intelligence_refresh",
+        "list_projects",
+        "append_project_memory_entry",
         "promote_handoff_to_action",
         "update_action_status",
         "record_outcome_measurement",
-        "append_project_memory_entry",
-        "create_demo_user",
-        "add_credits",
+        "trigger_intelligence_refresh",
+        "trigger_scan",
+        "generate_ai_prompts",
         "create_project",
         "add_prompt",
         "add_brand",
         "bulk_add_prompts"
+      ],
+      "disabled_tools": [
+        "delete_brand",
+        "create_demo_user",
+        "add_credits"
       ],
       "startup_timeout_sec": 10,
       "tool_timeout_sec": 60

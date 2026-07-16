@@ -45,6 +45,10 @@ const SAFE_TOOL_NAMES = new Set([
 ]);
 
 const CONFIRMED_WRITE_TOOL_NAMES = new Set([
+  "create_project",
+  "add_prompt",
+  "add_brand",
+  "bulk_add_prompts",
   "trigger_intelligence_refresh",
   "promote_handoff_to_action",
   "update_action_status",
@@ -57,14 +61,11 @@ const COST_TOOL_NAMES = new Set([
   "generate_ai_prompts"
 ]);
 
-// Config, destructive, and admin tools stay disabled until the production
-// server enforces the enterprise confirmation/idempotency contract. Scope
-// alone is not approval.
+// Destructive and admin tools remain blocked locally even for a broad operator
+// token. User-visible writes and provider-spend tools are exposed only in
+// confirmed-writes mode and remain server-gated by quote, scope, audit,
+// idempotency, and (for spend) credit/USD caps.
 const ALWAYS_BLOCKED_TOOL_NAMES = new Set([
-  "create_project",
-  "add_prompt",
-  "add_brand",
-  "bulk_add_prompts",
   "delete_brand",
   "create_demo_user",
   "add_credits"
@@ -174,7 +175,7 @@ async function handleRequest(message) {
           version: SERVER_VERSION
         },
         instructions:
-          "AuraCite Agent Hub bridge. Safe mode exposes read and draft tools. Set AURACITE_MCP_BRIDGE_MODE=confirmed-writes only for server-confirmed writes (mcp:write + exact confirmation + idempotency) and cost tools (mcp:spend + one-tap execution approval + max_credits/max_usd caps). Config, destructive, admin, and publishing tools remain blocked until their enterprise server contract is live."
+          "AuraCite Agent Hub bridge. Safe mode exposes read and draft tools. Set AURACITE_MCP_BRIDGE_MODE=confirmed-writes only for server-confirmed project/brand/prompt, memory, Action Center, and stored-rescore writes (mcp:write + pending approval + one-use quote + idempotency) and cost tools (mcp:spend + one-tap execution approval + max_credits/max_usd caps). Destructive, admin, credit-grant, demo-user, publishing, and raw Vault-file writes remain blocked."
       };
 
     case "ping":
@@ -200,7 +201,7 @@ async function handleRequest(message) {
           `Tool ${toolName} is disabled by local bridge mode '${mode}'.`,
           {
             bridge_mode: mode,
-            enable_confirmed_writes: "Set AURACITE_MCP_BRIDGE_MODE=confirmed-writes for exact-confirmation write or cost-capped tools.",
+            enable_confirmed_writes: "Set AURACITE_MCP_BRIDGE_MODE=confirmed-writes for approval-gated writes or cost-capped tools.",
             provider_calls_triggered: 0,
             credits_charged: 0
           }

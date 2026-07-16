@@ -6,7 +6,8 @@ Runs AuraCite Agent Hub confirmed-write deny dogfood with a temporary production
 Logs in with the local SecretManagement production test credential, creates a
 short-lived mcp:write key, runs dogfood-gate.ps1 -WriteDeny, revokes the key in
 a finally block, and verifies that the revoked key fails closed. The deny smoke
-does not perform confirmed mutations; it proves exact-confirmation gates.
+does not perform confirmed mutations; it proves that unapproved writes create
+pending requests and never reach business mutation handlers.
 #>
 [CmdletBinding()]
 param(
