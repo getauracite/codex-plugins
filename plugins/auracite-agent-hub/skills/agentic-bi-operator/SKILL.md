@@ -72,19 +72,13 @@ Every Action Handoff draft must carry:
 - measurement plan
 - explicit caveats
 
-## Phase 2.5 - Direct Config Writes (zero-touch)
+## Configuration Mutation Boundary
 
-`create_project`, `add_prompt`, `add_brand`, `bulk_add_prompts` are free, reversible config writes.
-AuraCite does **not** gate them with a platform approval quote or an idempotency check (unlike Phase
-3 below) — a valid `mcp:write` call executes immediately. `list_projects` is a read, available in
-every bridge mode.
-
-Because there is no platform-side confirmation gate, the confirmation checkpoint is this
-conversation: only call these after the user has explicitly asked for the specific project/prompt/
-brand to be created in this turn. Do not call them speculatively or as a side effect of a read/draft
-request. State what was created and its ID after the call.
-
-Bridge requirement: `AURACITE_MCP_BRIDGE_MODE=confirmed-writes` and an API key scoped for `mcp:write`.
+`create_project`, `add_prompt`, `add_brand`, and `bulk_add_prompts` are production mutations even
+when they are free or reversible. This package keeps them blocked until the production server
+enforces exact confirmation, audit, tenant/project scope, and idempotency replay protection for
+each call. Never treat `mcp:write`, bridge mode, or a broad conversation instruction as approval.
+`list_projects` is read-only and available in safe mode.
 
 ## Phase 3 - Confirmed Writes
 

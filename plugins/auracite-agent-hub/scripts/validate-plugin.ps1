@@ -55,7 +55,7 @@ $manifest = Get-Content -Raw -LiteralPath $manifestPath | ConvertFrom-Json
 if ($manifest.name -ne 'auracite-agent-hub') {
   throw "Unexpected plugin name: $($manifest.name)"
 }
-if ($manifest.version -ne '0.9.0') {
+if ($manifest.version -ne '0.10.0') {
   throw "Unexpected plugin version: $($manifest.version)"
 }
 if ($manifest.repository -ne 'https://github.com/getauracite/codex-plugins') {
@@ -79,7 +79,24 @@ if ($null -eq $mcpServers) {
   throw '.mcp.json must use top-level mcpServers object.'
 }
 $enabledTools = @($mcpServers.auracite.enabled_tools)
+$expectedProductionReadToolCount = 36
+if ($enabledTools.Count -ne $expectedProductionReadToolCount) {
+  throw "Hosted enabled_tools must match the verified production read surface ($expectedProductionReadToolCount), found $($enabledTools.Count)."
+}
+$staleTools = @('get_crawler_hits')
+if (@($staleTools | Where-Object { $enabledTools -contains $_ }).Count -gt 0) {
+  throw "Stale production tool advertised in hosted enabled_tools: $($staleTools -join ', ')"
+}
 $requiredTools = @(
+  'list_projects',
+  'summarize_user_landscape',
+  'list_recent_signups',
+  'get_gsc_search_analytics',
+  'get_gsc_top_queries',
+  'get_gsc_breakdown',
+  'get_gsc_top_pages',
+  'get_gsc_trend',
+  'get_ai_visibility_overview',
   'get_intelligence_overview',
   'get_intelligence_freshness',
   'list_intelligence_refresh_candidates',
@@ -117,6 +134,16 @@ if ($missingDisabledTools.Count -gt 0) {
   throw "Missing write/cost/admin tools from .mcp.json disabled_tools: $($missingDisabledTools -join ', ')"
 }
 
+$enterpriseBlockedTools = @('create_project', 'add_prompt', 'add_brand', 'bulk_add_prompts', 'delete_brand', 'create_demo_user', 'add_credits')
+$unexpectedEnabledTools = @($enterpriseBlockedTools | Where-Object { $enabledTools -contains $_ })
+if ($unexpectedEnabledTools.Count -gt 0) {
+  throw "Enterprise safety violation: mutation/admin tools must not be enabled by default: $($unexpectedEnabledTools -join ', ')"
+}
+$missingEnterpriseBlockedTools = @($enterpriseBlockedTools | Where-Object { $disabledTools -notcontains $_ })
+if ($missingEnterpriseBlockedTools.Count -gt 0) {
+  throw "Enterprise safety violation: mutation/admin tools must be explicitly disabled: $($missingEnterpriseBlockedTools -join ', ')"
+}
+
 if ($mcpServers.auracite.url -ne 'https://auracite.de/mcp/rpc') {
   throw "AuraCite hosted MCP entry must point at the OAuth-capable JSON-RPC endpoint, got: $($mcpServers.auracite.url)"
 }
@@ -145,6 +172,13 @@ if ($bridge.env.AURACITE_MCP_BRIDGE_MODE -ne 'safe') {
 }
 
 $bridgeEnabledTools = @($bridge.enabled_tools)
+if ($bridgeEnabledTools.Count -ne $expectedProductionReadToolCount) {
+  throw "Bridge enabled_tools must match the verified production read surface ($expectedProductionReadToolCount), found $($bridgeEnabledTools.Count)."
+}
+$bridgeStaleTools = @($staleTools | Where-Object { $bridgeEnabledTools -contains $_ })
+if ($bridgeStaleTools.Count -gt 0) {
+  throw "Stale production tool advertised in bridge enabled_tools: $($bridgeStaleTools -join ', ')"
+}
 $bridgeMissingTools = @($requiredTools | Where-Object { $bridgeEnabledTools -notcontains $_ })
 if ($bridgeMissingTools.Count -gt 0) {
   throw "Missing Agent Hub tools from auracite-jsonrpc-bridge enabled_tools: $($bridgeMissingTools -join ', ')"
@@ -153,6 +187,14 @@ $bridgeDisabledTools = @($bridge.disabled_tools)
 $bridgeMissingDisabledTools = @($requiredDisabledTools | Where-Object { $bridgeDisabledTools -notcontains $_ })
 if ($bridgeMissingDisabledTools.Count -gt 0) {
   throw "Missing write/cost/admin tools from auracite-jsonrpc-bridge disabled_tools: $($bridgeMissingDisabledTools -join ', ')"
+}
+$bridgeUnexpectedEnabledTools = @($enterpriseBlockedTools | Where-Object { $bridgeEnabledTools -contains $_ })
+if ($bridgeUnexpectedEnabledTools.Count -gt 0) {
+  throw "Enterprise safety violation: bridge mutation/admin tools must not be enabled by default: $($bridgeUnexpectedEnabledTools -join ', ')"
+}
+$bridgeMissingEnterpriseBlockedTools = @($enterpriseBlockedTools | Where-Object { $bridgeDisabledTools -notcontains $_ })
+if ($bridgeMissingEnterpriseBlockedTools.Count -gt 0) {
+  throw "Enterprise safety violation: bridge mutation/admin tools must be explicitly disabled: $($bridgeMissingEnterpriseBlockedTools -join ', ')"
 }
 
 $node = Get-Command node -ErrorAction SilentlyContinue

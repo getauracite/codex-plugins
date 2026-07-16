@@ -125,6 +125,19 @@ try {
   assert.ok(toolNames.includes("get_agent_hub_timeline"), "get_agent_hub_timeline should be visible");
   assert.ok(toolNames.includes("get_intelligence_freshness"), "get_intelligence_freshness should be visible");
   assert.ok(toolNames.includes("create_intelligence_refresh_plan_draft"), "create_intelligence_refresh_plan_draft should be visible");
+  for (const toolName of [
+    "list_projects",
+    "summarize_user_landscape",
+    "list_recent_signups",
+    "get_gsc_search_analytics",
+    "get_gsc_top_queries",
+    "get_gsc_breakdown",
+    "get_gsc_top_pages",
+    "get_gsc_trend",
+    "get_ai_visibility_overview"
+  ]) {
+    assert.ok(toolNames.includes(toolName), `${toolName} should be visible in safe mode`);
+  }
   assert.equal(toolNames.includes("trigger_intelligence_refresh"), false, "trigger_intelligence_refresh must stay hidden in safe mode");
   assert.equal(toolNames.includes("trigger_scan"), false, "trigger_scan must stay locally blocked");
 

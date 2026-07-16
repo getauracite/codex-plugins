@@ -83,12 +83,9 @@ enabled = true
 default_tools_approval_mode = "prompt"
 ```
 
-Safe mode exposes read and draft-only tools. Confirmed-writes mode (`AURACITE_MCP_BRIDGE_MODE=confirmed-writes`) additionally exposes two tiers:
+Safe mode exposes read and draft-only tools. Confirmed-writes mode (`AURACITE_MCP_BRIDGE_MODE=confirmed-writes`) exposes only tools whose server contract requires `mcp:write`, exact confirmation, audit, and idempotency replay checks.
 
-- **Free config writes** (`create_project`, `add_prompt`, `add_brand`, `bulk_add_prompts`): require a key with `mcp:write` only. No approval tap, no idempotency key — these are cheap and reversible, so the server executes them directly on the scope check.
-- **Confirmed-write tools** (memory/action-status updates, intelligence refresh): require `mcp:write` plus an exact server-issued confirmation string and idempotency replay checks.
-
-Destructive/admin tools (`delete_brand`, `create_demo_user`, `add_credits`) stay disabled through the bridge in every mode. Cost-bearing runs (`trigger_scan`, `generate_ai_prompts`) additionally require `mcp:spend`, a server-created execution quote approved once in AuraCite, a max credit cap, and the exact confirmation text.
+Project/brand/prompt mutations (`create_project`, `add_prompt`, `add_brand`, `bulk_add_prompts`) remain blocked by this package until that same enterprise server contract is live for them. A `mcp:write` scope or bridge mode is never approval by itself. Destructive/admin tools (`delete_brand`, `create_demo_user`, `add_credits`) stay disabled through the bridge in every mode. Cost-bearing runs (`trigger_scan`, `generate_ai_prompts`) additionally require `mcp:spend`, a server-created execution quote approved once in AuraCite, a max credit cap, and the exact confirmation text.
 
 Run the fallback health check:
 

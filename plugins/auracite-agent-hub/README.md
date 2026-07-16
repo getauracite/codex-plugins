@@ -34,10 +34,15 @@ Start with `mcp:read`. Confirmed writes and provider-spend workflows are not ena
 ## What The Plugin Can Do
 
 - Read AI visibility signals for brands, mentions, citations, competitors, share of voice, visibility score, trends, and per-engine breakdowns.
+- Read project discovery, user-landscape summaries, recent signups, Google Search Console query/page
+  evidence, bounded country/device breakdowns, query trends, and the combined AI-visibility overview.
 - Read AuraCite Intelligence context: freshness, refresh candidates, refresh status, opportunity briefs, and evidence summaries.
 - Read Action Center handoff state and compact project-memory snapshots.
 - Draft context packs, refresh plans, handoffs, and approval notes without changing production state.
 - Guide Codex through safe AuraCite operating workflows with bundled skills.
+
+The bundled `ai-visibility` skill helps Codex answer direct GEO and GSC questions from the `auracite`
+MCP server. It is read-only and does not trigger scans, provider calls, or credit spend.
 
 ## Safety Model
 
