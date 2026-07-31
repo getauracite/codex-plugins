@@ -55,8 +55,11 @@ $manifest = Get-Content -Raw -LiteralPath $manifestPath | ConvertFrom-Json
 if ($manifest.name -ne 'auracite-agent-hub') {
   throw "Unexpected plugin name: $($manifest.name)"
 }
-if ($manifest.version -ne '0.11.0') {
+if ($manifest.version -ne '0.11.1') {
   throw "Unexpected plugin version: $($manifest.version)"
+}
+if (@($manifest.interface.defaultPrompt).Count -ne 3) {
+  throw "Expected exactly 3 displayed starter prompts, found $(@($manifest.interface.defaultPrompt).Count)"
 }
 if ($manifest.repository -ne 'https://github.com/getauracite/codex-plugins') {
   throw "Unexpected plugin repository: $($manifest.repository)"

@@ -24,7 +24,10 @@ Check whether the Codex plugin is safe, installable, and honest about what is li
 - Tenant, user, and project scope are explicit for every agentic workflow.
 - Confirmed writes require audit trail, idempotency, and an exact human confirmation contract.
 - Privacy/terms URLs are real and public.
-- README states the current distribution path and the official-directory limitation.
+- README distinguishes the live repo marketplace from the review-gated universal Plugins Directory.
+- OpenAI submission materials include five positive and three negative reviewer cases.
+- Production MCP tools expose accurate read-only, destructive, and open-world annotations.
+- Reviewer credentials and domain-verification tokens are never committed to the plugin repo.
 
 ## Verdict Format
 
