@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.11.1 - 2026-07-31
+
+Universal Plugins Directory submission-readiness release.
+
+### Changed
+
+- Updated distribution guidance for OpenAI's public submission portal and universal directory shared by ChatGPT and Codex.
+- Reduced manifest starter prompts to the three workflows Codex displays.
+- Added reviewer-ready listing data, release notes, five positive cases, three negative cases, and explicit launch gates.
+- Added continuous package validation for pull requests and pushes.
+
+### Safety
+
+- No credentials, domain challenge tokens, tenant identifiers, or customer evidence are stored in this repository.
+- The repo marketplace remains the only claimed live distribution path until OpenAI review is approved and the approved version is published.
+
 ## v0.10.0 - 2026-07-16
 
 Enterprise read-surface and governance release.

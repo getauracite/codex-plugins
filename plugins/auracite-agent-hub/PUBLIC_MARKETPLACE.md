@@ -1,7 +1,7 @@
 # AuraCite Agent Hub Public Codex Marketplace Notes
 
 Status: public repo-marketplace release path
-Last updated: 2026-06-10
+Last updated: 2026-07-31
 
 ## Public Install Path
 
@@ -31,16 +31,19 @@ plugins/auracite-agent-hub/
 auracite-agent-hub@auracite-marketplace
 ```
 
-## OpenAI Curated Directory
+## OpenAI Universal Plugins Directory
 
-OpenAI's Codex Plugin Directory includes an `openai-curated` marketplace. Current public OpenAI docs describe:
+OpenAI now documents one universal public Plugins Directory shared by ChatGPT and Codex. Public publication uses the OpenAI Platform plugin submission portal and a review-before-publish workflow.
 
-- Local and repo marketplaces.
-- Personal marketplaces.
-- Workspace sharing from the Codex app.
-- Curated plugins in the OpenAI directory.
+AuraCite submits as `With MCP` plus bundled skills:
 
-They do not document a self-service submission form for arbitrary third-party plugins. Treat OpenAI-curated listing as a separate partner/submission track after the repo-marketplace package is public, tested, and accompanied by screenshots or a short demo.
+- Universal MCP URL: `https://auracite.de/mcp/rpc`
+- OAuth-first authentication
+- Public skills bundle under `plugins/auracite-agent-hub/skills/`
+- Domain verification on `auracite.de`
+- Reviewer account supplied only through the OpenAI portal
+
+The repo marketplace remains available while review is pending. Do not claim universal-directory availability until OpenAI approval is published.
 
 ## Release Checklist
 
@@ -57,6 +60,11 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File plugins/auracite-agent-hub/scripts
 node plugins/auracite-agent-hub/scripts/test-jsonrpc-bridge.mjs
 codex plugin list --marketplace auracite-marketplace --json --available
 ```
+
+- OpenAI submission pack includes five positive and three negative review cases.
+- Every production MCP tool advertises accurate `readOnlyHint`, `destructiveHint`, and `openWorldHint` values.
+- Reviewer credentials work without MFA and are entered only in the OpenAI portal.
+- Domain challenge token is served exactly at `/.well-known/openai-apps-challenge` after the portal issues it.
 
 ## Public Repo Sync
 

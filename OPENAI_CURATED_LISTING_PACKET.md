@@ -1,149 +1,128 @@
-# OpenAI Curated Listing Packet - AuraCite Agent Hub
+# OpenAI Universal Plugins Directory Submission Packet
 
-Status: ready for partner/submission contact  
-Prepared: 2026-06-10  
-Plugin version: `0.8.1`  
+Status: preparation in progress; not yet submitted
+Updated: 2026-07-31
+Plugin version: `0.11.1`
+Submission type: `With MCP` plus bundled skills
 Public repository: https://github.com/getauracite/codex-plugins
 
 ## Listing
 
-Name: AuraCite Agent Hub
-
-Developer: AuraCite
-
-Category: Productivity
+- Name: `AuraCite Agent Hub`
+- Developer: `AuraCite`
+- Category: `Productivity`
+- Website: https://auracite.de
+- Support: https://github.com/getauracite/codex-plugins/issues
+- Privacy: https://auracite.de/privacy
+- Terms: https://auracite.de/terms
+- Repository: https://github.com/getauracite/codex-plugins
 
 Short description:
 
-> Read AuraCite AI visibility data and prepare safe action handoffs from Codex.
+> Operate AuraCite from Codex with scoped reads, approved writes, and spend-capped workflows.
 
 Long description:
 
-AuraCite Agent Hub connects Codex to AuraCite's AI Visibility Intelligence, Action Center handoffs, project memory, and evidence-backed operating rules. It uses the hosted OAuth-capable MCP JSON-RPC endpoint at `https://auracite.de/mcp/rpc` by default, so users sign in to AuraCite and approve scoped access instead of pasting API keys. Safe read and draft tools are exposed for brand visibility, mentions, citations, share of voice, Intelligence freshness, opportunity briefs, Action Center handoffs, compact project timelines, context-pack drafts, refresh-plan drafts, and approval-note drafts. Mutating, cost-bearing, admin, bulk, publishing, and raw Vault-write tools stay disabled by default.
+> AuraCite Agent Hub connects ChatGPT and Codex to AuraCite AI Visibility Intelligence, Google Search Console evidence, project configuration, Action Center, and project memory. OAuth binds access to the selected AuraCite tenant, project, user, and scopes. Read and draft workflows are the safe default. Data-changing actions require a server-issued approval, human approval in AuraCite, one-use consumption, audit, and idempotency. Provider runs additionally require explicit credit and optional USD caps plus CostGuard. Destructive administration, credit grants, demo-user creation, publishing, and raw Vault-file writes are not exposed by the plugin.
 
-## Public Install Path
+## MCP Submission
+
+- URL type: `Universal`
+- Production MCP URL: `https://auracite.de/mcp/rpc`
+- Authentication: OAuth 2.0 authorization code with PKCE S256
+- OAuth resource: `https://auracite.de/mcp/rpc`
+- Scopes: `mcp:read`, `mcp:write`, `mcp:spend`
+- Challenge base URL: `https://auracite.de`
+- Challenge path: `/.well-known/openai-apps-challenge`
+- Custom UI: none
+- Content security policy: not applicable; plugin has no MCP UI component
+
+The portal-issued domain token must be served as the only response body at the challenge path. Never commit the token to this repository.
+
+## Skills Bundle
+
+Upload the final plugin bundle containing:
+
+- `agent-session-sync`
+- `agentic-bi-operator`
+- `ai-visibility`
+- `plugin-readiness-review`
+- `visibility-action-planner`
+
+## Starter Prompts
+
+1. `Compare my AI visibility evidence with Google Search Console performance.`
+2. `Review AuraCite Intelligence opportunities and prepare a gated Action Center handoff draft.`
+3. `Build an AuraCite Context Pack from Intelligence evidence and project memory.`
+
+## Authentication And Safety
+
+Default reviewer path uses `mcp:read`. Optional mutation review uses `mcp:write` in a dedicated reviewer project.
+
+All remote writes require:
+
+- tenant/project/user binding from authenticated server context
+- a fresh idempotency key
+- a server-created pending approval quote
+- human approval in AuraCite `/approvals`
+- one-use quote consumption and replay-safe response
+- audit event
+
+Provider calls additionally require `mcp:spend`, `max_credits`, optional `max_usd`, CostGuard, and explicit human approval. Reviewer tests must not perform paid provider calls unless OpenAI specifically requests one and AuraCite separately authorizes a bounded test.
+
+Always unavailable through the public plugin:
+
+- destructive brand deletion
+- demo-user creation
+- credit grants and other admin/billing actions
+- public publishing
+- raw Vault-file writes
+
+## Reviewer Account
+
+Provide a dedicated production reviewer account only through the OpenAI submission portal.
+
+Requirements:
+
+- no MFA, SMS, or email-confirmation step during review
+- member of one isolated reviewer tenant/project
+- deterministic fixture data for all positive read cases
+- enough product access for read cases
+- `mcp:write` only if the approved-write case is included
+- no `mcp:spend` by default
+- credentials rotated or revoked after review
+
+Never place credentials, tenant IDs, project IDs, tokens, or private links in Git, release notes, screenshots, or this packet.
+
+## Tool Annotation Contract
+
+- Pure reads and deterministic drafts: `readOnlyHint=true`, `destructiveHint=false`, `openWorldHint=false`.
+- Private create/append/status writes: `readOnlyHint=false`, `destructiveHint=false`, `openWorldHint=false`.
+- Stored rescore, provider spend, deletion, and irreversible admin value changes: `readOnlyHint=false`, `destructiveHint=true`, `openWorldHint=false`.
+- No submitted tool publishes content or changes publicly visible internet state.
+
+Production scan evidence must confirm these values before submission.
+
+## Release Notes
+
+Initial public-directory submission of AuraCite Agent Hub `0.11.1`.
+
+The plugin combines OAuth-authenticated AuraCite MCP tools with five evidence-first operating skills. It exposes scoped AI-visibility, Google Search Console, Intelligence, Action Center, and project-memory reads and drafts by default. Optional private writes use pending server quotes, human approval, audit, one-use consumption, and idempotency. Provider workflows additionally require hard credit/USD caps and CostGuard. Destructive administration, credit grants, demo-user creation, publishing, and raw Vault-file writes remain unavailable.
+
+## Availability
+
+Country/region selection requires final publisher decision in the portal. Select only regions covered by AuraCite support, legal terms, and production operations. Do not infer global availability from repository access.
+
+## Review Cases And Gates
+
+- Review cases: [`OPENAI_SUBMISSION_TEST_CASES.md`](OPENAI_SUBMISSION_TEST_CASES.md)
+- Launch gates: [`OPENAI_SUBMISSION_CHECKLIST.md`](OPENAI_SUBMISSION_CHECKLIST.md)
+
+## Public Install While Review Is Pending
 
 ```powershell
 codex plugin marketplace add getauracite/codex-plugins
 codex plugin add auracite-agent-hub@auracite-marketplace
 ```
 
-Marketplace source: `auracite-marketplace`  
-Plugin ID: `auracite-agent-hub@auracite-marketplace`
-
-## URLs
-
-- Website: https://auracite.de
-- Public repo: https://github.com/getauracite/codex-plugins
-- Privacy policy: https://auracite.de/privacy
-- Terms: https://auracite.de/terms
-- Hosted MCP endpoint: https://auracite.de/mcp/rpc
-
-## User Value
-
-AuraCite helps teams understand and improve how AI engines mention, cite, rank, and describe their brand. The Codex plugin lets a user bring that visibility context into an agentic coding or operating session and turn evidence into safe next actions without switching tools or copying API keys into prompts.
-
-Primary use cases:
-
-- Summarize brand AI visibility, share of voice, mentions, citations, and competitor context.
-- Inspect Intelligence freshness and draft a safe refresh plan.
-- Review opportunity briefs and draft an Action Center handoff.
-- Build a compact AuraCite Context Pack for a Codex session.
-- Review a Codex session and record follow-up recommendations through guarded workflows.
-
-## Auth And Safety Model
-
-Normal install is OAuth-first. Users sign in to AuraCite and approve scoped access.
-
-Defaults:
-
-- `mcp:read` for read-only intelligence and draft workflows.
-- No provider-spend workflows by default.
-- No raw Obsidian Vault file writes.
-- No admin, billing, demo-user, credit, publishing, or bulk mutation tools by default.
-
-Confirmed writes require:
-
-- `mcp:write`
-- Exact server-issued confirmation text
-- Server-side idempotency and replay checks
-- Audit events
-- Explicit tenant/project/user scope
-
-Provider-spend tools additionally require:
-
-- `mcp:spend`
-- Server-issued quote
-- Hard `max_credits`
-- Optional `max_usd`
-- CostGuard enforcement
-- Explicit confirmation
-
-## Verification Evidence
-
-Public repo-marketplace install:
-
-- GitHub repo is public: `getauracite/codex-plugins`
-- Default branch: `main`
-- Public install commands tested from a clean Codex home.
-- Installed plugin version: `0.8.1`
-
-Package checks:
-
-- `plugins/auracite-agent-hub/scripts/validate-plugin.ps1`
-- `plugins/auracite-agent-hub/scripts/test-jsonrpc-bridge.mjs`
-
-Production app checks:
-
-- AuraCite `/agent-hub` production install flow shows both public Codex CLI commands.
-- Desktop and mobile authenticated smoke passed.
-- Runtime console and failed-request checks passed.
-- Old slash-command install copy was absent.
-- No fallback API-key create/revoke action was triggered during the install-copy smoke.
-- No provider-cost, DataForSEO, LLM, or GSC action was triggered.
-
-## OpenAI Documentation Alignment
-
-The public OpenAI Codex docs describe:
-
-- Plugins bundle skills, app integrations, and MCP servers for Codex.
-- Plugins can be shared through marketplace sources such as repo marketplaces.
-- A Codex marketplace file lives at `$REPO_ROOT/.agents/plugins/marketplace.json` for repo-scoped catalogs.
-- `codex plugin marketplace add owner/repo` installs and tracks a marketplace source.
-- The Codex app also has a curated OpenAI plugin directory.
-
-As of 2026-06-10, the public docs do not document a self-service submission form for arbitrary third-party plugins to the OpenAI-curated directory. This packet is therefore prepared for the partner/submission-contact path, while the public repo marketplace remains the live install path.
-
-Relevant official docs:
-
-- https://developers.openai.com/codex/plugins
-- https://developers.openai.com/codex/plugins/build
-
-## Submission Notes
-
-Recommended partner-contact message:
-
-```text
-Hello OpenAI Codex team,
-
-AuraCite would like to submit AuraCite Agent Hub for review for the OpenAI-curated Codex Plugin Directory.
-
-The plugin is already available through a public Codex repo marketplace:
-https://github.com/getauracite/codex-plugins
-
-Install:
-codex plugin marketplace add getauracite/codex-plugins
-codex plugin add auracite-agent-hub@auracite-marketplace
-
-AuraCite Agent Hub connects Codex to AuraCite AI Visibility Intelligence and Action Center workflows through an OAuth-first hosted MCP endpoint. Default workflows are read/draft-only. Confirmed writes and spend tools are gated by explicit scopes, server-issued confirmations, idempotency, audit events, CostGuard, and credit/USD caps.
-
-We can provide a short demo video, screenshots, security notes, and production smoke evidence on request.
-```
-
-Recommended attachments for a private submission thread:
-
-- One short install/use demo video.
-- One redacted screenshot of the Codex plugin listing.
-- One redacted screenshot of the AuraCite OAuth/install flow.
-- This packet.
-
+Repo-marketplace availability is not evidence of OpenAI review or universal-directory publication.

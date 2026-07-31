@@ -121,11 +121,11 @@ node plugins/auracite-agent-hub/scripts/test-jsonrpc-bridge.mjs
 
 Internal AuraCite operators can run production dogfood helpers in `scripts/` with temporary keys. Those helpers create, use, revoke, and verify scoped connections without printing secrets.
 
-## Known Distribution Notes
+## Distribution
 
 This package is ready for public repo-marketplace distribution through `getauracite/codex-plugins`.
 
-OpenAI's Codex Plugin Directory has a curated `openai-curated` channel. The public OpenAI docs currently describe repo/personal marketplaces and workspace sharing for third-party distribution; they do not document a self-service submission form for arbitrary third-party plugins. Treat OpenAI-curated listing as a separate partner/submission track, not as the guaranteed install path.
+OpenAI now provides a submission portal for the universal Plugins Directory shared by ChatGPT and Codex. AuraCite is preparing the reviewed `With MCP` plus skills submission there. The public repo marketplace remains the working install path until OpenAI approves the submission and AuraCite publishes the approved version.
 
 ## License
 
