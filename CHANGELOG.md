@@ -1,5 +1,30 @@
 # Changelog
 
+## v0.11.3 - 2026-08-14
+
+### Removed
+
+- `summarize_user_landscape` and `list_recent_signups` are no longer advertised to customers. Both
+  read platform-wide user data with no tenant filter, so the production server reclassified them to
+  admin scope and stopped listing them in the hosted `/mcp/rpc` catalog. They stayed in the
+  package's safe allowlist regardless — the wrong place for a tool no customer key may call. They
+  are now explicitly disabled and blocked by the local bridge in every mode.
+
+### Fixed
+
+- The live bridge smoke asserted that both tools *should* be visible in safe mode, which stopped
+  being true when the server reclassified them. It now asserts the opposite. The unit test keeps
+  them in the fake upstream's tool list so the filter is proven to drop them.
+
+### Changed
+
+- Verified operator surface is now 46 tools (was 48); safe read surface is 35.
+
+### Safety
+
+- No customer-visible capability is lost: these tools already failed at the server for every
+  non-admin key. This removes a misleading local allowlist entry, not a working feature.
+
 ## v0.11.2 - 2026-08-14
 
 ### Added

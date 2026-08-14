@@ -28,8 +28,6 @@
         "get_trend_data",
         "get_ai_engine_breakdown",
         "compare_brands",
-        "summarize_user_landscape",
-        "list_recent_signups",
         "get_gsc_search_analytics",
         "get_gsc_top_queries",
         "get_gsc_breakdown",
@@ -67,6 +65,8 @@
         "bulk_add_prompts"
       ],
       "disabled_tools": [
+        "summarize_user_landscape",
+        "list_recent_signups",
         "delete_brand",
         "create_demo_user",
         "add_credits"
@@ -90,8 +90,6 @@
         "get_trend_data",
         "get_ai_engine_breakdown",
         "compare_brands",
-        "summarize_user_landscape",
-        "list_recent_signups",
         "get_gsc_search_analytics",
         "get_gsc_top_queries",
         "get_gsc_breakdown",
@@ -129,6 +127,8 @@
         "bulk_add_prompts"
       ],
       "disabled_tools": [
+        "summarize_user_landscape",
+        "list_recent_signups",
         "delete_brand",
         "create_demo_user",
         "add_credits"

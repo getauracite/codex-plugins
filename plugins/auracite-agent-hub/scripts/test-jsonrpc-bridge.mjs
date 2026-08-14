@@ -209,8 +209,6 @@ try {
     assert.ok(names.includes("list_project_memory_entries"));
     for (const toolName of [
       "list_projects",
-      "summarize_user_landscape",
-      "list_recent_signups",
       "get_gsc_search_analytics",
       "get_gsc_top_queries",
       "get_gsc_breakdown",
@@ -220,6 +218,11 @@ try {
     ]) {
       assert.ok(names.includes(toolName), `${toolName} should be visible in safe mode`);
     }
+    // Platform-wide operator reads: no tenant filter server-side, admin scope
+    // only, and absent from the hosted catalog. They must not survive the
+    // bridge filter either, in any mode.
+    assert.equal(names.includes("summarize_user_landscape"), false);
+    assert.equal(names.includes("list_recent_signups"), false);
     assert.equal(names.includes("trigger_intelligence_refresh"), false);
     assert.equal(names.includes("update_action_status"), false);
     assert.equal(names.includes("trigger_scan"), false);

@@ -127,8 +127,6 @@ try {
   assert.ok(toolNames.includes("create_intelligence_refresh_plan_draft"), "create_intelligence_refresh_plan_draft should be visible");
   for (const toolName of [
     "list_projects",
-    "summarize_user_landscape",
-    "list_recent_signups",
     "get_gsc_search_analytics",
     "get_gsc_top_queries",
     "get_gsc_breakdown",
@@ -138,6 +136,11 @@ try {
   ]) {
     assert.ok(toolNames.includes(toolName), `${toolName} should be visible in safe mode`);
   }
+  // These asserted the opposite until 0.11.3. The server reclassified both to
+  // admin scope and dropped them from the /mcp/rpc catalog, so a customer key
+  // never sees them — the smoke was asserting a reality that no longer exists.
+  assert.equal(toolNames.includes("summarize_user_landscape"), false, "summarize_user_landscape must not reach a customer key");
+  assert.equal(toolNames.includes("list_recent_signups"), false, "list_recent_signups must not reach a customer key");
   assert.equal(toolNames.includes("trigger_intelligence_refresh"), false, "trigger_intelligence_refresh must stay hidden in safe mode");
   assert.equal(toolNames.includes("trigger_scan"), false, "trigger_scan must stay locally blocked");
 

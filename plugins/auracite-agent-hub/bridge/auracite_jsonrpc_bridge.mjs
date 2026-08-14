@@ -18,8 +18,6 @@ const SAFE_TOOL_NAMES = new Set([
   "get_trend_data",
   "get_ai_engine_breakdown",
   "compare_brands",
-  "summarize_user_landscape",
-  "list_recent_signups",
   "get_gsc_search_analytics",
   "get_gsc_top_queries",
   "get_gsc_breakdown",
@@ -67,6 +65,14 @@ const COST_TOOL_NAMES = new Set([
 // confirmed-writes mode and remain server-gated by quote, scope, audit,
 // idempotency, and (for spend) credit/USD caps.
 const ALWAYS_BLOCKED_TOOL_NAMES = new Set([
+  // Platform-wide operator reads: ListRecentUsers and UserLandscapeSummary take
+  // no tenant argument, so they return every AuraCite user and the platform's
+  // total spend regardless of the calling key. The server reclassified them to
+  // admin scope and dropped them from the /mcp/rpc catalog; they were still
+  // sitting in the safe allowlist here, which is the wrong place for a tool no
+  // customer key may call.
+  "summarize_user_landscape",
+  "list_recent_signups",
   "delete_brand",
   "create_demo_user",
   "add_credits"

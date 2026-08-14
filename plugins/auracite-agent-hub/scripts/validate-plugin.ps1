@@ -55,7 +55,7 @@ $manifest = Get-Content -Raw -LiteralPath $manifestPath | ConvertFrom-Json
 if ($manifest.name -ne 'auracite-agent-hub') {
   throw "Unexpected plugin name: $($manifest.name)"
 }
-if ($manifest.version -ne '0.11.2') {
+if ($manifest.version -ne '0.11.3') {
   throw "Unexpected plugin version: $($manifest.version)"
 }
 if (@($manifest.interface.defaultPrompt).Count -ne 3) {
@@ -82,8 +82,8 @@ if ($null -eq $mcpServers) {
   throw '.mcp.json must use top-level mcpServers object.'
 }
 $enabledTools = @($mcpServers.auracite.enabled_tools)
-$expectedProductionReadToolCount = 37
-$expectedProductionOperatorToolCount = 48
+$expectedProductionReadToolCount = 35
+$expectedProductionOperatorToolCount = 46
 if ($enabledTools.Count -ne $expectedProductionOperatorToolCount) {
   throw "Hosted enabled_tools must match the verified operator surface ($expectedProductionOperatorToolCount), found $($enabledTools.Count)."
 }
@@ -99,8 +99,6 @@ if (@($staleTools | Where-Object { $enabledTools -contains $_ }).Count -gt 0) {
 }
 $requiredTools = @(
   'list_projects',
-  'summarize_user_landscape',
-  'list_recent_signups',
   'get_gsc_search_analytics',
   'get_gsc_top_queries',
   'get_gsc_breakdown',
@@ -132,6 +130,8 @@ if ($missingTools.Count -gt 0) {
 
 $disabledTools = @($mcpServers.auracite.disabled_tools)
 $requiredDisabledTools = @(
+  'summarize_user_landscape',
+  'list_recent_signups',
   'delete_brand',
   'create_demo_user',
   'add_credits'
@@ -141,7 +141,7 @@ if ($missingDisabledTools.Count -gt 0) {
   throw "Missing write/cost/admin tools from .mcp.json disabled_tools: $($missingDisabledTools -join ', ')"
 }
 
-$enterpriseBlockedTools = @('delete_brand', 'create_demo_user', 'add_credits')
+$enterpriseBlockedTools = @('summarize_user_landscape', 'list_recent_signups', 'delete_brand', 'create_demo_user', 'add_credits')
 $unexpectedEnabledTools = @($enterpriseBlockedTools | Where-Object { $enabledTools -contains $_ })
 if ($unexpectedEnabledTools.Count -gt 0) {
   throw "Enterprise safety violation: mutation/admin tools must not be enabled by default: $($unexpectedEnabledTools -join ', ')"

@@ -2,7 +2,7 @@
 
 Status: preparation in progress; not yet submitted
 Updated: 2026-07-31
-Plugin version: `0.11.2`
+Plugin version: `0.11.3`
 Submission type: `With MCP` plus bundled skills
 Public repository: https://github.com/getauracite/codex-plugins
 
@@ -105,7 +105,7 @@ Production scan evidence must confirm these values before submission.
 
 ## Release Notes
 
-Initial public-directory submission of AuraCite Agent Hub `0.11.2`.
+Initial public-directory submission of AuraCite Agent Hub `0.11.3`.
 
 The plugin combines OAuth-authenticated AuraCite MCP tools with five evidence-first operating skills. It exposes scoped AI-visibility, Google Search Console, Intelligence, Action Center, and project-memory reads and drafts by default. Optional private writes use pending server quotes, human approval, audit, one-use consumption, and idempotency. Provider workflows additionally require hard credit/USD caps and CostGuard. Destructive administration, credit grants, demo-user creation, publishing, and raw Vault-file writes remain unavailable.
 

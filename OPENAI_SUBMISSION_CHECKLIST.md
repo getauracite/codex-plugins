@@ -5,11 +5,11 @@ Updated: 2026-07-31
 ## Package
 
 - [x] Public repository and repo marketplace available.
-- [x] Strict-semver manifest version `0.11.2`.
+- [x] Strict-semver manifest version `0.11.3`.
 - [x] Current plugin validator passes.
 - [x] Bundled bridge unit test passes without network or credentials.
 - [x] Three manifest starter prompts match supported workflows.
-- [ ] Fresh public-repo install in Codex completed after `0.11.2` release.
+- [ ] Fresh public-repo install in Codex completed after `0.11.3` release.
 
 ## Publisher And Portal
 
