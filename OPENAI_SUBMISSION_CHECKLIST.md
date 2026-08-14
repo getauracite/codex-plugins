@@ -26,7 +26,7 @@ Updated: 2026-07-31
 - [x] OAuth discovery and PKCE endpoints are public.
 - [x] Tenant/project/user scope is injected server-side.
 - [x] Writes and spend require durable approval/idempotency controls.
-- [ ] Corrected tool annotations deployed and confirmed through production `tools/list`.
+- [x] Corrected tool annotations deployed and confirmed through production `tools/list`.
 - [ ] Portal `Scan Tools` completes without validation errors.
 - [ ] Portal domain token served exactly at `https://auracite.de/.well-known/openai-apps-challenge`.
 - [ ] Domain verification succeeds.
