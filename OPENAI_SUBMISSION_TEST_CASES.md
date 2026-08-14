@@ -1,6 +1,6 @@
 # OpenAI Plugin Review Cases
 
-Version: `0.11.1`
+Version: `0.11.2`
 Updated: 2026-07-31
 
 Use one isolated reviewer tenant/project with deterministic fixture data. Credentials and IDs belong only in the OpenAI portal.

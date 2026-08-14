@@ -55,7 +55,7 @@ $manifest = Get-Content -Raw -LiteralPath $manifestPath | ConvertFrom-Json
 if ($manifest.name -ne 'auracite-agent-hub') {
   throw "Unexpected plugin name: $($manifest.name)"
 }
-if ($manifest.version -ne '0.11.1') {
+if ($manifest.version -ne '0.11.2') {
   throw "Unexpected plugin version: $($manifest.version)"
 }
 if (@($manifest.interface.defaultPrompt).Count -ne 3) {
@@ -82,12 +82,18 @@ if ($null -eq $mcpServers) {
   throw '.mcp.json must use top-level mcpServers object.'
 }
 $enabledTools = @($mcpServers.auracite.enabled_tools)
-$expectedProductionReadToolCount = 36
-$expectedProductionOperatorToolCount = 47
+$expectedProductionReadToolCount = 37
+$expectedProductionOperatorToolCount = 48
 if ($enabledTools.Count -ne $expectedProductionOperatorToolCount) {
   throw "Hosted enabled_tools must match the verified operator surface ($expectedProductionOperatorToolCount), found $($enabledTools.Count)."
 }
-$staleTools = @('get_crawler_hits')
+# get_crawler_hits was listed here until 0.11.2: the production MCP resource
+# registered it but never gave it a tool policy, so /mcp/rpc filtered it out of
+# tools/list and rejected the call. Advertising it would have been a false
+# promise to a reviewer. AuraCite 6a93e2a9 gave it a read policy and a catalog
+# entry, verified live against https://auracite.de, so it moves to
+# $requiredTools below. Keep this array for the next tool that regresses.
+$staleTools = @()
 if (@($staleTools | Where-Object { $enabledTools -contains $_ }).Count -gt 0) {
   throw "Stale production tool advertised in hosted enabled_tools: $($staleTools -join ', ')"
 }
@@ -101,6 +107,7 @@ $requiredTools = @(
   'get_gsc_top_pages',
   'get_gsc_trend',
   'get_ai_visibility_overview',
+  'get_crawler_hits',
   'get_intelligence_overview',
   'get_intelligence_freshness',
   'list_intelligence_refresh_candidates',

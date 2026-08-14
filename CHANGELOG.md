@@ -1,5 +1,30 @@
 # Changelog
 
+## v0.11.2 - 2026-08-14
+
+### Added
+
+- Restored `get_crawler_hits` to the hosted package and the local bridge allowlist. AI-crawler
+  access is the input side of AI visibility: which bots fetch which pages, and which pages are
+  crawled heavily but rarely cited.
+
+### Changed
+
+- Verified operator surface is now 48 tools (was 47).
+
+### Why it was removed in v0.11.0
+
+- The tool was registered on the production MCP server but had no entry in its tool policy, so
+  `/mcp/rpc` filtered it out of `tools/list` and rejected any call. Removing it was correct at the
+  time. AuraCite `6a93e2a9` closed that gap; the tool was verified live against
+  `https://auracite.de` before this release — listed with read-only annotations, and returning real
+  per-crawler data.
+
+### Safety
+
+- Read-only, no provider call, no credit spend, tenant/project scoped server-side. Write, cost, and
+  admin tools remain unchanged and blocked by default.
+
 ## v0.11.1 - 2026-07-31
 
 Universal Plugins Directory submission-readiness release.

@@ -25,6 +25,7 @@ const SAFE_TOOL_NAMES = new Set([
   "get_gsc_breakdown",
   "get_gsc_top_pages",
   "get_gsc_trend",
+  "get_crawler_hits",
   "get_ai_visibility_overview",
   "get_intelligence_overview",
   "get_intelligence_freshness",
