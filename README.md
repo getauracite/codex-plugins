@@ -1,10 +1,10 @@
 # AuraCite Agent Hub for Codex
 
-Connect Codex to [AuraCite](https://auracite.de) AI visibility intelligence: brand mentions, citations, share of voice, visibility scores, competitors, Google Search Console signals, Intelligence freshness, opportunity briefs, Action Center handoffs, and project memory.
+Connect Codex to [AuraCite](https://auracite.de) AI visibility intelligence: brand mentions, citations, share of voice, visibility scores, competitors, Google Search Console evidence, Intelligence freshness, opportunity briefs, Action Center handoffs, and project memory.
 
-The normal install path is OAuth-first. Install the plugin, sign in to AuraCite, approve scoped access, and start with read-only tools. No API key needs to be pasted into a repo, README, chat, or screenshot.
+The normal install path is OAuth-first: install the plugin, sign in to AuraCite, approve scoped access, start with read-only tools. No API key needs to be pasted into a repo, README, chat, or screenshot.
 
-## Install From The Public Marketplace Repo
+## Install (two commands)
 
 ```powershell
 codex plugin marketplace add getauracite/codex-plugins
@@ -17,69 +17,51 @@ Then start a new Codex thread and ask:
 Use AuraCite Agent Hub to summarize my current AI visibility state and draft one safe next action.
 ```
 
-You can also open Codex Plugins, switch to `AuraCite Plugins`, and install `AuraCite Agent Hub`.
+You can also open Codex Plugins, switch to `AuraCite Plugins`, and install `AuraCite Agent Hub` from there.
 
-## Sign In With AuraCite
+## Sign in with AuraCite
 
-The hosted MCP entry points to:
-
-```text
-https://auracite.de/mcp/rpc
-```
-
-Codex discovers AuraCite OAuth metadata, opens the browser, and asks you to sign in and approve the tenant, project, and scopes. The issued MCP token is scoped, revocable, rate-limited, and bound to the same server-side tenant/project/user controls as AuraCite API keys.
+The hosted MCP entry points to `https://auracite.de/mcp/rpc` (Streamable HTTP, JSON-RPC 2.0). Codex discovers the AuraCite OAuth metadata, opens the browser, and asks you to sign in and approve tenant, project, and scopes. The issued MCP token is scoped, revocable, rate-limited, and bound to the same server-side tenant/project/user controls as AuraCite API keys.
 
 Start with `mcp:read`. Confirmed writes and provider-spend workflows are not enabled by default.
 
-## What The Plugin Can Do
+## What the plugin can do
 
-- Read AI visibility signals for brands, mentions, citations, competitors, share of voice, visibility score, trends, and per-engine breakdowns.
-- Read project discovery, user-landscape summaries, recent signups, Google Search Console query/page
-  evidence, bounded country/device breakdowns, query trends, and the combined AI-visibility overview.
-- Read AuraCite Intelligence context: freshness, refresh candidates, refresh status, opportunity briefs, and evidence summaries.
-- Read Action Center handoff state and compact project-memory snapshots.
-- Draft context packs, refresh plans, handoffs, and approval notes without changing production state.
-- Guide Codex through safe AuraCite operating workflows with bundled skills.
+Current verified surface: 46 operator tools, of which 35 are safe-read tools.
 
-## Safety Model
+Reads (default, `mcp:read`):
 
-Read and draft tools are the default.
+- AI visibility signals: brands, mentions, citations, competitors, share of voice, visibility score, trends, per-engine breakdowns, brand comparison.
+- AI-crawler access: which bots fetch which of your pages.
+- Google Search Console: query and per-page evidence, bounded country and device breakdowns, query trends.
+- AuraCite Intelligence: freshness, refresh candidates, refresh status, opportunity briefs, evidence summaries.
+- Action Center handoff state and compact project-memory snapshots.
 
-Disabled by default:
+Drafts (no production state changes):
 
-- Brand/project mutation
-- Bulk prompt creation
-- Provider scans and provider-spend tools
-- Intelligence `stored_rescore`
-- Action Center status writes
-- Project-memory append writes
-- Admin, billing, demo-user, credit, publishing, and raw Vault file-write tools
+- Context packs, intelligence refresh plans, action handoffs, and approval notes, marked as read-only drafts with `human_review_required`.
 
-Project/brand/prompt writes remain blocked by the plugin until the production server exposes the
-same exact-confirmation, audit, scope, and idempotency contract used by other enterprise writes.
+Writes (only with `mcp:write` and approval):
 
-Confirmed writes require:
+- Project, brand, prompt, memory, Action Center, and stored-rescore writes. The first call creates a pending approval bound to tenant, project, and API key; the approved retry is one-use and idempotent.
 
-- `mcp:write`
-- Exact server-issued confirmation text
-- Server-side idempotency/replay checks
-- Audit events
-- Explicit tenant/project/user scope
+Spend (only with `mcp:spend` and hard caps):
 
-Provider-spend tools additionally require:
+- Provider scans and AI prompt generation, with a server-issued quote, a required max credit cap, an optional USD cap, and CostGuard enforcement.
 
-- `mcp:spend`
-- Server-issued quote
-- Hard `max_credits`
-- Optional `max_usd`
-- CostGuard enforcement
-- Explicit confirmation
+## Safety model
 
-## Manual Fallback
+Read and draft tools are the default. Disabled or blocked in every mode:
 
-Use this only for CI, headless environments, or a Codex workspace where MCP OAuth is unavailable.
+- Admin, billing, credit-grant, demo-user, publishing, and raw Vault-file writes.
+- Platform-wide observability tools (`summarize_user_landscape`, `list_recent_signups`): blocked since v0.11.3 after the production server reclassified them to admin scope.
+- Provider scans and spend tools without `mcp:spend`, quote, and caps.
 
-Create a scoped read-only Agent Hub connection in AuraCite, then set the token outside the repo:
+Confirmed writes require `mcp:write`, an approval in AuraCite (one-use, bound to tenant, project, and API key), server-side idempotency and replay checks, audit events, and explicit tenant/project/user scope. Tenant and project context is injected from the verified credential and overrides caller-supplied IDs.
+
+## Manual fallback (local bridge)
+
+Only for CI, headless environments, or workspaces where MCP OAuth is unavailable. Create a scoped read-only Agent Hub connection in AuraCite, set the token outside the repo:
 
 ```powershell
 $env:AURACITE_MCP_TOKEN = "gp_..."
@@ -87,7 +69,7 @@ $env:AURACITE_MCP_RPC_URL = "https://auracite.de/mcp/rpc"
 $env:AURACITE_MCP_BRIDGE_MODE = "safe"
 ```
 
-Enable the bundled local bridge only in user/workspace Codex config:
+Enable the bundled local bridge only in user or workspace Codex config:
 
 ```toml
 [plugins."auracite-agent-hub".mcp_servers.auracite-jsonrpc-bridge]
@@ -95,9 +77,9 @@ enabled = true
 default_tools_approval_mode = "prompt"
 ```
 
-Never commit tokens or paste them into support tickets, screenshots, docs, or vault notes.
+Safe mode exposes read and draft tools only. Never commit tokens or paste them into tickets, screenshots, docs, or vault notes.
 
-## Useful Prompts
+## Useful prompts
 
 ```text
 Use AuraCite Agent Hub to summarize my Intelligence freshness and list the safest next refresh candidates.
@@ -111,28 +93,25 @@ Use AuraCite Agent Hub to read my current opportunity briefs and draft one Actio
 Use AuraCite Agent Hub to prepare a Context Pack for this Codex session from project status, next actions, and visibility evidence.
 ```
 
-## Validate The Package
+## Validate the package
 
-From a checkout of the marketplace repo or AuraCite monorepo:
+From a checkout of this repo or the AuraCite monorepo:
 
 ```powershell
 pwsh -NoProfile -ExecutionPolicy Bypass -File plugins/auracite-agent-hub/scripts/validate-plugin.ps1
 node plugins/auracite-agent-hub/scripts/test-jsonrpc-bridge.mjs
 ```
 
-Internal AuraCite operators can run production dogfood helpers in `scripts/` with temporary keys. Those helpers create, use, revoke, and verify scoped connections without printing secrets.
+## Changelog
 
-## Distribution
+See [CHANGELOG.md](./CHANGELOG.md). Current version: 0.11.3.
 
-This package is ready for public repo-marketplace distribution through `getauracite/codex-plugins`.
+## Support and legal
 
-OpenAI now provides a submission portal for the universal Plugins Directory shared by ChatGPT and Codex. AuraCite is preparing the reviewed `With MCP` plus skills submission there. The public repo marketplace remains the working install path until OpenAI approves the submission and AuraCite publishes the approved version.
-
-For the curated listing track, see [`OPENAI_CURATED_LISTING_PACKET.md`](OPENAI_CURATED_LISTING_PACKET.md).
-Review cases and remaining launch gates live in [`OPENAI_SUBMISSION_TEST_CASES.md`](OPENAI_SUBMISSION_TEST_CASES.md) and [`OPENAI_SUBMISSION_CHECKLIST.md`](OPENAI_SUBMISSION_CHECKLIST.md).
-
-Release notes are tracked in [`CHANGELOG.md`](CHANGELOG.md).
+- Website: https://auracite.de
+- Support: hello@auracite.de
+- Privacy: https://auracite.de/privacy · Terms: https://auracite.de/terms · Impressum: https://auracite.de/impressum
 
 ## License
 
-Proprietary - (c) AuraCite.
+Proprietary, (c) AuraCite. See [LICENSE](./LICENSE).
