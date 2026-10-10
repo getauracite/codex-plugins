@@ -122,6 +122,7 @@ try {
   assert.equal(listed.error, undefined);
   const toolNames = listed.result.tools.map((tool) => tool.name);
   assert.ok(toolNames.includes("get_project_status"), "get_project_status should be visible");
+  assert.ok(toolNames.includes("get_visibility_kpis"), "get_visibility_kpis should be visible");
   assert.ok(toolNames.includes("get_agent_hub_timeline"), "get_agent_hub_timeline should be visible");
   assert.ok(toolNames.includes("get_intelligence_freshness"), "get_intelligence_freshness should be visible");
   assert.ok(toolNames.includes("create_intelligence_refresh_plan_draft"), "create_intelligence_refresh_plan_draft should be visible");
@@ -153,6 +154,25 @@ try {
   assert.equal(statusBody.mutation_performed, false);
   assert.equal(statusBody.provider_calls_triggered, 0);
   assert.equal(statusBody.credits_charged, 0);
+
+  const kpis = await client.request("tools/call", {
+    name: "get_visibility_kpis",
+    arguments: { period: "30d" }
+  });
+  assert.equal(kpis.error, undefined);
+  const kpiBody = parseToolContent(kpis);
+  assert.equal(kpiBody.period?.key, "30d");
+  for (const metric of ["ai_visibility", "share_of_voice", "recommendation_rate"]) {
+    assert.ok(["measured", "not_available"].includes(kpiBody[metric]?.status),
+      `${metric} must provide evidence status`);
+  }
+
+  const invalidKPIPeriod = await client.request("tools/call", {
+    name: "get_visibility_kpis",
+    arguments: { period: "1y" }
+  });
+  assert.ok(invalidKPIPeriod.error || invalidKPIPeriod.result?.isError,
+    "the backend must reject an unsupported KPI period");
 
   const timeline = await client.request("tools/call", {
     name: "get_agent_hub_timeline",
@@ -190,6 +210,9 @@ try {
     mode,
     tool_count: toolNames.length,
     has_get_project_status: toolNames.includes("get_project_status"),
+    has_get_visibility_kpis: toolNames.includes("get_visibility_kpis"),
+    kpi_30d_statuses: Object.fromEntries(["ai_visibility", "share_of_voice", "recommendation_rate"].map((name) => [name, kpiBody[name].status])),
+    invalid_kpi_period_rejected: true,
     has_get_agent_hub_timeline: toolNames.includes("get_agent_hub_timeline"),
     has_get_intelligence_freshness: toolNames.includes("get_intelligence_freshness"),
     has_trigger_intelligence_refresh: toolNames.includes("trigger_intelligence_refresh"),

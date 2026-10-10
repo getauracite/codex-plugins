@@ -33,7 +33,8 @@ Start with `mcp:read`. Add `mcp:write` for project, brand, prompt, memory, Actio
 
 ## What The Plugin Can Do
 
-- Read AI visibility signals for brands, mentions, citations, competitors, share of voice, visibility score, trends, and per-engine breakdowns.
+- Read evidence-grade AI visibility KPIs via `get_visibility_kpis` (`7d`/`30d`/`90d`): visibility, recommendation rate, and share of voice, each `measured` or `not_available` with period, `data_as_of`, numerator/denominator, and explicit reasons. Branded prompts stay separate under `brand_control`.
+- Read further AI visibility signals for brands, mentions, citations, competitors, share of voice, visibility score, trends, and per-engine breakdowns.
 - Read project discovery, user-landscape summaries, recent signups, Google Search Console query/page
   evidence, bounded country/device breakdowns, query trends, and the combined AI-visibility overview.
 - Read AuraCite Intelligence context: freshness, refresh candidates, refresh status, opportunity briefs, and evidence summaries.

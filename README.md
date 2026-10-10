@@ -27,11 +27,12 @@ Start with `mcp:read`. Confirmed writes and provider-spend workflows are not ena
 
 ## What the plugin can do
 
-Current verified surface: 46 operator tools, of which 35 are safe-read tools.
+Configured catalog: 47 operator tools, of which 36 are read/draft tools. Availability in an already-connected client depends on refreshing its tool catalog.
 
 Reads (default, `mcp:read`):
 
-- AI visibility signals: brands, mentions, citations, competitors, share of voice, visibility score, trends, per-engine breakdowns, brand comparison.
+- Evidence-grade AI visibility KPIs via `get_visibility_kpis` (`7d`/`30d`/`90d`): visibility, recommendation rate, share of voice, with period, `data_as_of`, denominator and explicit `not_available` reasons. Branded prompts stay separate under `brand_control`.
+- Further visibility signals: brands, mentions, citations, competitors, composite score, trends, per-engine breakdowns, brand comparison.
 - AI-crawler access: which bots fetch which of your pages.
 - Google Search Console: query and per-page evidence, bounded country and device breakdowns, query trends.
 - AuraCite Intelligence: freshness, refresh candidates, refresh status, opportunity briefs, evidence summaries.
@@ -104,7 +105,7 @@ node plugins/auracite-agent-hub/scripts/test-jsonrpc-bridge.mjs
 
 ## Changelog
 
-See [CHANGELOG.md](./CHANGELOG.md). Current version: 0.11.3.
+See [CHANGELOG.md](./CHANGELOG.md). Current version: 0.11.4.
 
 ## Support and legal
 

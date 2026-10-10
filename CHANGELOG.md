@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.11.4 - 2026-10-10
+
+### Added
+
+- Read-only `get_visibility_kpis` in both OAuth-hosted enabled tools and local safe JSON-RPC bridge allowlist.
+- Evidence-first skill guidance for `7d`, `30d`, `90d`, `measured`/`not_available`, denominators, `data_as_of`, and `buyer_discovery` vs `brand_control`.
+- Fake-RPC regression tests for tool discovery, allowed periods, and server rejection of `1y`; optional read-only live smoke checks.
+
+### Release notes
+
+- Synced from the AuraCite monorepo (merge f2a8ea7e). A new ChatGPT connector session or reconnection is still needed to refresh a pinned tool catalog.
+
 ## v0.11.3 - 2026-08-14
 
 ### Removed

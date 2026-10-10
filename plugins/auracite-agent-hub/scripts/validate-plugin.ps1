@@ -55,7 +55,7 @@ $manifest = Get-Content -Raw -LiteralPath $manifestPath | ConvertFrom-Json
 if ($manifest.name -ne 'auracite-agent-hub') {
   throw "Unexpected plugin name: $($manifest.name)"
 }
-if ($manifest.version -ne '0.11.3') {
+if ($manifest.version -ne '0.11.4') {
   throw "Unexpected plugin version: $($manifest.version)"
 }
 if (@($manifest.interface.defaultPrompt).Count -ne 3) {
@@ -82,8 +82,8 @@ if ($null -eq $mcpServers) {
   throw '.mcp.json must use top-level mcpServers object.'
 }
 $enabledTools = @($mcpServers.auracite.enabled_tools)
-$expectedProductionReadToolCount = 35
-$expectedProductionOperatorToolCount = 46
+$expectedProductionReadToolCount = 36
+$expectedProductionOperatorToolCount = 47
 if ($enabledTools.Count -ne $expectedProductionOperatorToolCount) {
   throw "Hosted enabled_tools must match the verified operator surface ($expectedProductionOperatorToolCount), found $($enabledTools.Count)."
 }
@@ -106,6 +106,7 @@ $requiredTools = @(
   'get_gsc_trend',
   'get_ai_visibility_overview',
   'get_crawler_hits',
+  'get_visibility_kpis',
   'get_intelligence_overview',
   'get_intelligence_freshness',
   'list_intelligence_refresh_candidates',

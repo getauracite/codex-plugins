@@ -13,6 +13,7 @@ const bridgePath = path.join(pluginRoot, "bridge", "auracite_jsonrpc_bridge.mjs"
 const remoteRequests = [];
 const remoteTools = [
   "list_projects",
+  "get_visibility_kpis",
   "summarize_user_landscape",
   "list_recent_signups",
   "get_gsc_search_analytics",
@@ -80,6 +81,15 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (body.method === "tools/call") {
+    if (body.params?.name === "get_visibility_kpis" && body.params?.arguments?.period === "1y") {
+      respond({
+        result: {
+          isError: true,
+          content: [{ type: "text", text: 'invalid period "1y": use 7d, 30d or 90d' }]
+        }
+      });
+      return;
+    }
     respond({
       result: {
         content: [
@@ -201,6 +211,7 @@ try {
     const listed = await client.request("tools/list");
     const names = listed.result.tools.map((tool) => tool.name);
     assert.ok(names.includes("get_project_status"));
+    assert.ok(names.includes("get_visibility_kpis"), "read-only headline KPIs must be visible in safe mode");
     assert.ok(names.includes("get_agent_hub_timeline"));
     assert.ok(names.includes("get_intelligence_freshness"));
     assert.ok(names.includes("list_intelligence_refresh_candidates"));
@@ -235,6 +246,28 @@ try {
     assert.equal(read.error, undefined);
     const readBody = JSON.parse(read.result.content[0].text);
     assert.equal(readBody.proxied_tool, "get_project_status");
+
+    for (const period of ["7d", "30d", "90d"]) {
+      const kpis = await client.request("tools/call", {
+        name: "get_visibility_kpis",
+        arguments: { project_id: "project-1", period }
+      });
+      assert.equal(kpis.error, undefined);
+      const body = JSON.parse(kpis.result.content[0].text);
+      assert.equal(body.proxied_tool, "get_visibility_kpis");
+      assert.equal(body.proxied_arguments.project_id, "project-1");
+      assert.equal(body.proxied_arguments.period, period);
+    }
+
+    // The bridge must transparently return an MCP tool error from the server;
+    // period validation itself is implemented and tested in the Go backend.
+    const invalidPeriod = await client.request("tools/call", {
+      name: "get_visibility_kpis",
+      arguments: { project_id: "project-1", period: "1y" }
+    });
+    assert.equal(invalidPeriod.error, undefined);
+    assert.equal(invalidPeriod.result.isError, true);
+    assert.match(invalidPeriod.result.content[0].text, /invalid period/);
 
     const timeline = await client.request("tools/call", {
       name: "get_agent_hub_timeline",

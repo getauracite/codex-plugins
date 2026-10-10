@@ -15,6 +15,7 @@ const SAFE_TOOL_NAMES = new Set([
   "list_competitors",
   "get_visibility_score",
   "get_share_of_voice",
+  "get_visibility_kpis",
   "get_trend_data",
   "get_ai_engine_breakdown",
   "compare_brands",

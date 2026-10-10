@@ -15,7 +15,8 @@ answer tied to returned data; do not invent engine, query, citation, or competit
 | `list_brands` / `list_projects` | Find the tracked brand and project |
 | `get_dashboard_stats` | Headline mentions, citations, and sentiment for `7d`, `30d`, or `90d` |
 | `get_mentions` / `get_citations` | Inspect AI-answer mentions and earned source links |
-| `get_visibility_score` / `get_share_of_voice` | Composite GEO score and engine share |
+| `get_visibility_kpis` | Buyer-discovery headline rates (visibility, recommendations, share of voice) with measured/not_available status, base, scope, and data date for 7d/30d/90d |
+| `get_visibility_score` / `get_share_of_voice` | Legacy composite GEO score and share of voice; do not mix brand_control into the headline |
 | `get_ai_engine_breakdown` / `get_trend_data` | Engine-level comparison and time-series context |
 | `list_competitors` / `compare_brands` | Identify and compare tracked competitors |
 | `get_gsc_top_queries` / `get_gsc_top_pages` | Search demand and landing-page performance |
@@ -27,7 +28,7 @@ answer tied to returned data; do not invent engine, query, citation, or competit
 ## Working pattern
 
 1. Identify the intended brand/project with `list_brands` and `list_projects`.
-2. Start with `get_dashboard_stats`, `get_visibility_score`, or `get_ai_visibility_overview`.
+2. Start with `get_visibility_kpis` (period `7d`, `30d`, or `90d`). Preserve each metric's `status`, numerator/denominator, period, and `data_as_of`. A `not_available` metric is not zero. Keep `brand_control` separate from non-brand `buyer_discovery` rates. Use `get_dashboard_stats` for additional legacy dashboard context.
 3. Drill into mentions, citations, engine breakdown, competitors, GSC queries/pages, or trends.
 4. Separate observed evidence from interpretation and state the time window.
 5. If the user asks what to do next, hand the evidence to `visibility-action-planner` and keep any
