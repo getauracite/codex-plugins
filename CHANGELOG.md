@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.11.5 - 2026-10-12
+
+### Changed
+
+- `get_project_status`, `get_vault_next_actions`, `get_recent_changelog` and `get_agent_hub_timeline` are removed from hosted `enabled_tools` and the safe bridge allowlist. They read a snapshot of AuraCite's own development state, the same for every caller, and AuraCite PR #198 made them operator-only (`mcp:admin`). A customer key now gets a refusal instead of AuraCite's dev changelog.
+- Project context comes from `list_project_memory_entries` (tenant-scoped). OpenAI test case P4, the workspace guide and the smoke/dogfood scripts use it.
+- `validate-plugin.ps1` lists the four tools as stale. Tool counts are 43/32.
+
+### Release notes
+
+- Ship together with AuraCite PR #198. Reconnect the ChatGPT connector or start a new session to refresh a pinned tool catalog.
+
 ## v0.11.4 - 2026-10-10
 
 ### Added

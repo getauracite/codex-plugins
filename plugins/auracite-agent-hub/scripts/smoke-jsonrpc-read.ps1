@@ -58,10 +58,7 @@ $requiredTools = @(
   'list_intelligence_opportunity_briefs',
   'get_intelligence_opportunity_brief',
   'list_action_handoffs',
-  'get_vault_next_actions',
-  'get_project_status',
-  'get_recent_changelog',
-  'get_agent_hub_timeline',
+  'list_project_memory_entries',
   'create_context_pack_draft',
   'create_action_handoff_draft',
   'write_approval_note_draft'
@@ -104,11 +101,11 @@ if ($refreshPlan.mutation_performed -ne $false -or $refreshPlan.approval_gate -n
 }
 Write-Host "Intelligence refresh controls OK: candidates=$($freshness.refresh_candidate_count), planGate=$($refreshPlan.approval_gate)."
 
+# The four snapshot tools (get_project_status, get_vault_next_actions,
+# get_recent_changelog, get_agent_hub_timeline) are operator-only since
+# AuraCite PR #198; a customer key reads its tenant memory store instead.
 $memoryChecks = @(
-  @{ name = 'get_project_status'; arguments = @{} },
-  @{ name = 'get_vault_next_actions'; arguments = @{ limit = 3 } },
-  @{ name = 'get_recent_changelog'; arguments = @{ limit = 3 } },
-  @{ name = 'get_agent_hub_timeline'; arguments = @{ limit = 5 } }
+  @{ name = 'list_project_memory_entries'; arguments = @{ limit = 3 } }
 )
 $memoryRequestId = 5
 foreach ($check in $memoryChecks) {
@@ -122,12 +119,12 @@ foreach ($check in $memoryChecks) {
   if ($memory.mutation_performed -ne $false) {
     throw "$($check.name) did not report mutation_performed=false."
   }
-  if ($memory.redaction_state -ne 'secret_safe_snapshot') {
-    throw "$($check.name) did not report secret_safe_snapshot redaction state."
+  if ($memory.redaction_state -ne 'secret_safe_server_store') {
+    throw "$($check.name) did not report secret_safe_server_store redaction state."
   }
 }
 
-Write-Host 'Project memory tools OK: status, next actions, changelog, and Agent Hub timeline are secret-safe read-only snapshots.'
+Write-Host 'Project memory OK: list_project_memory_entries is a secret-safe, read-only tenant store.'
 
 if ([string]::IsNullOrWhiteSpace($OpportunityId) -and $opportunityCount -gt 0) {
   $OpportunityId = @($overview.opportunities)[0].id

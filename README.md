@@ -27,7 +27,7 @@ Start with `mcp:read`. Confirmed writes and provider-spend workflows are not ena
 
 ## What the plugin can do
 
-Configured catalog: 47 operator tools, of which 36 are read/draft tools. Availability in an already-connected client depends on refreshing its tool catalog.
+Configured catalog: 43 operator tools, of which 32 are read/draft tools. Availability in an already-connected client depends on refreshing its tool catalog.
 
 Reads (default, `mcp:read`):
 
@@ -105,7 +105,7 @@ node plugins/auracite-agent-hub/scripts/test-jsonrpc-bridge.mjs
 
 ## Changelog
 
-See [CHANGELOG.md](./CHANGELOG.md). Current version: 0.11.4.
+See [CHANGELOG.md](./CHANGELOG.md). Current version: 0.11.5.
 
 ## Support and legal
 

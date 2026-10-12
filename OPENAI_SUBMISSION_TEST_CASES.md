@@ -31,9 +31,9 @@ Use one isolated reviewer tenant/project with deterministic fixture data. Creden
 ### P4 — Project Context Pack
 
 - Prompt: `Build a compact Context Pack for this project from status, next actions, recent changes, and project memory.`
-- Expected behavior: call `get_project_status`, `get_vault_next_actions`, `get_recent_changelog`, `list_project_memory_entries`, and `create_context_pack_draft` as useful.
+- Expected behavior: call `list_project_memory_entries` and `create_context_pack_draft` as useful.
 - Expected result: scoped summary with sources and open decisions; no raw secrets or Vault-file write.
-- Fixture: secret-safe project status, next actions, changelog, and memory entries.
+- Fixture: secret-safe project memory entries (`project_status`, `next_actions`, `changelog`, `decision_log`).
 
 ### P5 — Brand and prompt inventory
 

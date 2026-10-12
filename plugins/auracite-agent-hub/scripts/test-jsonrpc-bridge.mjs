@@ -210,9 +210,7 @@ try {
 
     const listed = await client.request("tools/list");
     const names = listed.result.tools.map((tool) => tool.name);
-    assert.ok(names.includes("get_project_status"));
     assert.ok(names.includes("get_visibility_kpis"), "read-only headline KPIs must be visible in safe mode");
-    assert.ok(names.includes("get_agent_hub_timeline"));
     assert.ok(names.includes("get_intelligence_freshness"));
     assert.ok(names.includes("list_intelligence_refresh_candidates"));
     assert.ok(names.includes("create_intelligence_refresh_plan_draft"));
@@ -234,18 +232,22 @@ try {
     // bridge filter either, in any mode.
     assert.equal(names.includes("summarize_user_landscape"), false);
     assert.equal(names.includes("list_recent_signups"), false);
+    // Project-memory snapshot tools describe AuraCite's own dev state and are
+    // operator-only server-side (AuraCite PR #198); the safe bridge drops them.
+    assert.equal(names.includes("get_project_status"), false);
+    assert.equal(names.includes("get_agent_hub_timeline"), false);
     assert.equal(names.includes("trigger_intelligence_refresh"), false);
     assert.equal(names.includes("update_action_status"), false);
     assert.equal(names.includes("trigger_scan"), false);
     assert.equal(names.includes("create_project"), false);
 
     const read = await client.request("tools/call", {
-      name: "get_project_status",
+      name: "list_project_memory_entries",
       arguments: { tenant_id: "ignored-by-server" }
     });
     assert.equal(read.error, undefined);
     const readBody = JSON.parse(read.result.content[0].text);
-    assert.equal(readBody.proxied_tool, "get_project_status");
+    assert.equal(readBody.proxied_tool, "list_project_memory_entries");
 
     for (const period of ["7d", "30d", "90d"]) {
       const kpis = await client.request("tools/call", {
@@ -273,9 +275,7 @@ try {
       name: "get_agent_hub_timeline",
       arguments: { limit: 4 }
     });
-    assert.equal(timeline.error, undefined);
-    const timelineBody = JSON.parse(timeline.result.content[0].text);
-    assert.equal(timelineBody.proxied_tool, "get_agent_hub_timeline");
+    assert.match(timeline.error.message, /disabled by local bridge/i);
 
     const denied = await client.request("tools/call", {
       name: "update_action_status",
