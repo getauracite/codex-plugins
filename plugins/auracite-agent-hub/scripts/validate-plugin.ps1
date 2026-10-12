@@ -55,7 +55,7 @@ $manifest = Get-Content -Raw -LiteralPath $manifestPath | ConvertFrom-Json
 if ($manifest.name -ne 'auracite-agent-hub') {
   throw "Unexpected plugin name: $($manifest.name)"
 }
-if ($manifest.version -ne '0.11.4') {
+if ($manifest.version -ne '0.11.5') {
   throw "Unexpected plugin version: $($manifest.version)"
 }
 if (@($manifest.interface.defaultPrompt).Count -ne 3) {
@@ -82,8 +82,8 @@ if ($null -eq $mcpServers) {
   throw '.mcp.json must use top-level mcpServers object.'
 }
 $enabledTools = @($mcpServers.auracite.enabled_tools)
-$expectedProductionReadToolCount = 36
-$expectedProductionOperatorToolCount = 47
+$expectedProductionReadToolCount = 32
+$expectedProductionOperatorToolCount = 43
 if ($enabledTools.Count -ne $expectedProductionOperatorToolCount) {
   throw "Hosted enabled_tools must match the verified operator surface ($expectedProductionOperatorToolCount), found $($enabledTools.Count)."
 }
@@ -93,7 +93,15 @@ if ($enabledTools.Count -ne $expectedProductionOperatorToolCount) {
 # promise to a reviewer. AuraCite 6a93e2a9 gave it a read policy and a catalog
 # entry, verified live against https://auracite.de, so it moves to
 # $requiredTools below. Keep this array for the next tool that regresses.
-$staleTools = @()
+# The four project-memory snapshot tools read one embedded file describing
+# AuraCite's own development state, identical for every caller. AuraCite PR
+# #198 made them operator-only (mcp:admin), so a customer key gets a refusal.
+$staleTools = @(
+  'get_vault_next_actions',
+  'get_project_status',
+  'get_recent_changelog',
+  'get_agent_hub_timeline'
+)
 if (@($staleTools | Where-Object { $enabledTools -contains $_ }).Count -gt 0) {
   throw "Stale production tool advertised in hosted enabled_tools: $($staleTools -join ', ')"
 }
@@ -115,10 +123,6 @@ $requiredTools = @(
   'list_intelligence_opportunity_briefs',
   'get_intelligence_opportunity_brief',
   'list_action_handoffs',
-  'get_vault_next_actions',
-  'get_project_status',
-  'get_recent_changelog',
-  'get_agent_hub_timeline',
   'list_project_memory_entries',
   'create_context_pack_draft',
   'create_action_handoff_draft',

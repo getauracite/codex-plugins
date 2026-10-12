@@ -64,7 +64,7 @@ First-session goal:
 
 1. Install from the intended repo-marketplace path.
 2. Approve AuraCite OAuth for read-only `mcp:read`.
-3. Run `get_agent_hub_timeline`, `get_project_status`, `get_intelligence_freshness`, and one draft tool.
+3. Run `list_project_memory_entries`, `get_intelligence_freshness`, and one draft tool.
 4. Revoke the connection.
 5. Verify failed access after revocation.
 6. Capture sanitized findings only.

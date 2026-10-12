@@ -175,10 +175,6 @@ try {
   assert.equal(listed.error, undefined);
   const toolNames = listed.result.tools.map((tool) => tool.name);
   const requiredSafeTools = [
-    "get_project_status",
-    "get_agent_hub_timeline",
-    "get_vault_next_actions",
-    "get_recent_changelog",
     "get_intelligence_overview",
     "get_intelligence_freshness",
     "list_intelligence_refresh_candidates",
@@ -198,20 +194,15 @@ try {
   assert.equal(toolNames.includes("trigger_scan"), false, "safe mode must hide trigger_scan");
 
   const startup = passedSession("startup_context");
-  const status = await callTool(client, startup, "get_project_status");
-  const timeline = await callTool(client, startup, "get_agent_hub_timeline", { limit: 8 });
-  const nextActions = await callTool(client, startup, "get_vault_next_actions", { limit: 5 });
-  const changelog = await callTool(client, startup, "get_recent_changelog", { limit: 5 });
+  // Startup context comes from the tenant memory store; the AuraCite-internal
+  // snapshot tools are operator-only since AuraCite PR #198.
+  const startupMemory = await callTool(client, startup, "list_project_memory_entries", { limit: 8 });
   startup.observations = {
-    snapshot_version: status.snapshot_version || "",
-    production_state: status.production_state || "",
-    timeline_entries: firstArrayLength(timeline, ["timeline", "items", "entries"]),
-    next_action_items: firstArrayLength(nextActions, ["next_actions", "actions", "items"]),
-    changelog_items: firstArrayLength(changelog, ["changelog", "entries", "items"]),
-    redaction_state: status.redaction_state || timeline.redaction_state || ""
+    memory_entries: firstArrayLength(startupMemory, ["entries", "items"]),
+    redaction_state: startupMemory.redaction_state || ""
   };
-  if (startup.observations.timeline_entries < 3) {
-    startup.findings.push("Agent Hub timeline has fewer than 3 entries; first-run context may feel thin.");
+  if (startup.observations.memory_entries < 3) {
+    startup.findings.push("Project memory has fewer than 3 entries; first-run context may feel thin.");
   }
   sessions.push(startup);
 
@@ -278,7 +269,6 @@ try {
   const closeout = passedSession("closeout_memory");
   const handoffs = await callTool(client, closeout, "list_action_handoffs", { limit: 10 });
   const memoryEntries = await callTool(client, closeout, "list_project_memory_entries", { limit: 5 });
-  const closingTimeline = await callTool(client, closeout, "get_agent_hub_timeline", { limit: 8 });
   const denied = await client.request("tools/call", {
     name: "update_action_status",
     arguments: {
@@ -293,7 +283,6 @@ try {
   closeout.observations = {
     handoff_count: firstArrayLength(handoffs, ["handoffs", "items", "runs"]),
     memory_entry_count: firstArrayLength(memoryEntries, ["entries", "items"]),
-    closing_timeline_entries: firstArrayLength(closingTimeline, ["timeline", "items", "entries"]),
     safe_write_denial: true
   };
   if (closeout.observations.memory_entry_count === 0) {

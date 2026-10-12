@@ -121,9 +121,12 @@ try {
   const listed = await client.request("tools/list");
   assert.equal(listed.error, undefined);
   const toolNames = listed.result.tools.map((tool) => tool.name);
-  assert.ok(toolNames.includes("get_project_status"), "get_project_status should be visible");
+  assert.ok(toolNames.includes("list_project_memory_entries"), "list_project_memory_entries should be visible");
   assert.ok(toolNames.includes("get_visibility_kpis"), "get_visibility_kpis should be visible");
-  assert.ok(toolNames.includes("get_agent_hub_timeline"), "get_agent_hub_timeline should be visible");
+  // Operator-only since AuraCite PR #198: the snapshot describes AuraCite's own
+  // dev state, not the caller's project.
+  assert.equal(toolNames.includes("get_project_status"), false, "get_project_status must not reach a customer key");
+  assert.equal(toolNames.includes("get_agent_hub_timeline"), false, "get_agent_hub_timeline must not reach a customer key");
   assert.ok(toolNames.includes("get_intelligence_freshness"), "get_intelligence_freshness should be visible");
   assert.ok(toolNames.includes("create_intelligence_refresh_plan_draft"), "create_intelligence_refresh_plan_draft should be visible");
   for (const toolName of [
@@ -146,8 +149,8 @@ try {
   assert.equal(toolNames.includes("trigger_scan"), false, "trigger_scan must stay locally blocked");
 
   const status = await client.request("tools/call", {
-    name: "get_project_status",
-    arguments: {}
+    name: "list_project_memory_entries",
+    arguments: { limit: 3 }
   });
   assert.equal(status.error, undefined);
   const statusBody = parseToolContent(status);
@@ -174,18 +177,12 @@ try {
   assert.ok(invalidKPIPeriod.error || invalidKPIPeriod.result?.isError,
     "the backend must reject an unsupported KPI period");
 
-  const timeline = await client.request("tools/call", {
+  const deniedTimeline = await client.request("tools/call", {
     name: "get_agent_hub_timeline",
     arguments: { limit: 5 }
   });
-  assert.equal(timeline.error, undefined);
-  const timelineBody = parseToolContent(timeline);
-  assert.equal(timelineBody.source, "curated_agent_hub_timeline");
-  assert.equal(timelineBody.mutation_performed, false);
-  assert.equal(timelineBody.provider_calls_triggered, 0);
-  assert.equal(timelineBody.credits_charged, 0);
-  assert.ok(Array.isArray(timelineBody.timeline), "timeline must be an array");
-  assert.ok(timelineBody.timeline.length > 0, "timeline must not be empty");
+  assert.ok(deniedTimeline.error, "safe-mode bridge must deny the operator-only get_agent_hub_timeline");
+  assert.match(deniedTimeline.error.message, /disabled by local bridge/i);
 
   const deniedWrite = await client.request("tools/call", {
     name: "update_action_status",

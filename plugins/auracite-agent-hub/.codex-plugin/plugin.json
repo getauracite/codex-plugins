@@ -1,6 +1,6 @@
 {
   "name": "auracite-agent-hub",
-  "version": "0.11.4",
+  "version": "0.11.5",
   "description": "Connect Codex to AuraCite AI Visibility Intelligence, Google Search Console evidence, project operations, approved writes, spend-capped workflows, and enterprise-safe agent operating rules.",
   "author": {
     "name": "AuraCite",

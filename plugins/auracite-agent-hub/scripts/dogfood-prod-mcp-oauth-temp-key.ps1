@@ -310,7 +310,7 @@ try {
   # Exercise bounded, stored-data reads through the OAuth bearer itself. These
   # calls must not trigger provider work, credits, or production mutation.
   $oauthReadChecks = @(
-    @{ name = 'get_project_status'; arguments = @{} },
+    @{ name = 'list_project_memory_entries'; arguments = @{ limit = 3 } },
     @{ name = 'get_intelligence_freshness'; arguments = @{} },
     @{ name = 'get_gsc_search_analytics'; arguments = @{ days = 30; limit = 5 } },
     @{ name = 'get_gsc_top_queries'; arguments = @{ days = 30; limit = 5 } },
