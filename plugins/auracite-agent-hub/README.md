@@ -33,6 +33,8 @@ Start with `mcp:read`. Add `mcp:write` for project, brand, prompt, memory, Actio
 
 ## What The Plugin Can Do
 
+Version 0.12.0 adds optional owner-only `search_geo_knowledge` and `get_geo_knowledge` reads. They require `mcp:agentops:read` plus the server's live owner check. The shared CLI can instead read the canonical corpus from an authorized repository checkout with `--corpus`, without Railway or a running backend. Retain card IDs, sources, applicability, freshness and the pinned corpus hash. Hypotheses remain research-only.
+
 - Read evidence-grade AI visibility KPIs via `get_visibility_kpis` (`7d`/`30d`/`90d`): visibility, recommendation rate, and share of voice, each `measured` or `not_available` with period, `data_as_of`, numerator/denominator, and explicit reasons. Branded prompts stay separate under `brand_control`.
 - Read further AI visibility signals for brands, mentions, citations, competitors, share of voice, visibility score, trends, and per-engine breakdowns.
 - Read project discovery, user-landscape summaries, recent signups, Google Search Console query/page

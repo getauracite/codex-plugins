@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.12.0 - 2026-11-08
+
+- Add optional owner-only `search_geo_knowledge` and `get_geo_knowledge` reads, preserving the server's scope and owner gates.
+- Route GEO audit and handoff skills through the canonical corpus and shared CLI, with context, freshness, source references and hash pinning. Direct CLI retrieval requires no backend deployment.
+- Preserve v0.11.5's exclusion of the four internal project snapshots. Package counts are 45 configured tools and 34 read/draft tools; this does not promise every credential can discover them.
+- Ported from AuraCite release `169a233752ddbf7075ddc2e7cba913fd27ae040a`. Public bridge tests use a synthetic remote schema; corpus validation belongs to the canonical repository. Restart or reconnect existing clients to refresh loaded skills and tools.
+
 ## v0.11.5 - 2026-10-12
 
 ### Changed

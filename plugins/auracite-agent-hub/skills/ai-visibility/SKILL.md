@@ -34,6 +34,32 @@ answer tied to returned data; do not invent engine, query, citation, or competit
 5. If the user asks what to do next, hand the evidence to `visibility-action-planner` and keep any
    Action Center handoff at `human_review_required`.
 
+## Shared optimization knowledge for owner workflows
+
+Read the [canonical entry](https://github.com/G5317/AuraCite/blob/master/docs/GEO_KNOWLEDGE_BASE.md)
+through an authorized repository connection. Select and record the actual repository commit; if
+working from an unreleased PR, say so. Retrieve its canonical corpus unchanged and use the shared
+CLI with `--corpus <file>` in the available cloud workspace or local checkout. Railway, AgentOps,
+a local coding worker and a backend deployment are not prerequisites. Working files are disposable
+read copies, never a second editable knowledge source. Raw JSON inspection alone is not a passed
+retrieval/validation run.
+
+Pass the actual provider/surface and known industry, page type and locale. Pin the returned
+`corpus_hash` with `expected_corpus_hash` on subsequent reads. Retain card ID/version, sources,
+review date, applicability and limitations. Only actionable results support recommendations;
+research results remain hypotheses or blocked knowledge. Documentation is not a measured customer
+effect. A missing result is a knowledge gap.
+
+The owner tools `search_geo_knowledge` and `get_geo_knowledge` are optional additional access paths.
+They require `mcp:agentops:read` plus the live owner gate and must match the selected corpus hash.
+If the backend is unavailable or serves another hash, use the direct CLI path. Do not broaden
+permissions, require a backend deployment or substitute archived strategies as a workaround.
+Customer-only workflows may use their stored measurements and explicitly sourced public guidance.
+
+Keep customer observations and outcomes in their existing project scope. Link decisions to card
+IDs/version/hash and existing action/measurement references; do not copy private customer data into
+the global corpus or copy the corpus into project memory.
+
 ## Safety and scope
 
 - This skill is read-only. It must not trigger scans, ingestion, provider calls, publishing, or credit

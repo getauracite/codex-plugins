@@ -34,6 +34,9 @@ const SAFE_TOOL_NAMES = new Set([
   "list_intelligence_opportunity_briefs",
   "get_intelligence_opportunity_brief",
   "list_action_handoffs",
+  // Discovery and calls still require the remote owner and scope gates.
+  "search_geo_knowledge",
+  "get_geo_knowledge",
   "list_project_memory_entries",
   "create_context_pack_draft",
   "create_action_handoff_draft",

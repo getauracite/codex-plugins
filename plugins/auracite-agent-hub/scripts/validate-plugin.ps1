@@ -55,7 +55,7 @@ $manifest = Get-Content -Raw -LiteralPath $manifestPath | ConvertFrom-Json
 if ($manifest.name -ne 'auracite-agent-hub') {
   throw "Unexpected plugin name: $($manifest.name)"
 }
-if ($manifest.version -ne '0.11.5') {
+if ($manifest.version -ne '0.12.0') {
   throw "Unexpected plugin version: $($manifest.version)"
 }
 if (@($manifest.interface.defaultPrompt).Count -ne 3) {
@@ -82,10 +82,10 @@ if ($null -eq $mcpServers) {
   throw '.mcp.json must use top-level mcpServers object.'
 }
 $enabledTools = @($mcpServers.auracite.enabled_tools)
-$expectedProductionReadToolCount = 32
-$expectedProductionOperatorToolCount = 43
+$expectedProductionReadToolCount = 34
+$expectedProductionOperatorToolCount = 45
 if ($enabledTools.Count -ne $expectedProductionOperatorToolCount) {
-  throw "Hosted enabled_tools must match the verified operator surface ($expectedProductionOperatorToolCount), found $($enabledTools.Count)."
+  throw "Hosted enabled_tools must match the configured operator surface ($expectedProductionOperatorToolCount), found $($enabledTools.Count)."
 }
 # get_crawler_hits was listed here until 0.11.2: the production MCP resource
 # registered it but never gave it a tool policy, so /mcp/rpc filtered it out of
@@ -123,6 +123,8 @@ $requiredTools = @(
   'list_intelligence_opportunity_briefs',
   'get_intelligence_opportunity_brief',
   'list_action_handoffs',
+  'search_geo_knowledge',
+  'get_geo_knowledge',
   'list_project_memory_entries',
   'create_context_pack_draft',
   'create_action_handoff_draft',
@@ -185,7 +187,7 @@ if ($bridge.env.AURACITE_MCP_BRIDGE_MODE -ne 'safe') {
 
 $bridgeEnabledTools = @($bridge.enabled_tools)
 if ($bridgeEnabledTools.Count -ne $expectedProductionOperatorToolCount) {
-  throw "Bridge enabled_tools must match the verified operator surface ($expectedProductionOperatorToolCount), found $($bridgeEnabledTools.Count)."
+  throw "Bridge enabled_tools must match the configured operator surface ($expectedProductionOperatorToolCount), found $($bridgeEnabledTools.Count)."
 }
 $bridgeStaleTools = @($staleTools | Where-Object { $bridgeEnabledTools -contains $_ })
 if ($bridgeStaleTools.Count -gt 0) {

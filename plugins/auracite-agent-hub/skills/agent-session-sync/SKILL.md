@@ -17,6 +17,10 @@ Turn agent work into durable AuraCite operating context without leaking secrets 
 4. Prefer compact entries in the relevant repo doc or vault note instead of duplicating the entire chat.
 5. For production-facing work, include the smoke-test status and whether cost-bearing actions were avoided or explicitly approved.
 6. If the session touched Visibility Intelligence or Action Center, capture the handoff and measurement state.
+7. For a GEO/SEO decision, preserve knowledge card IDs/versions and `corpus_hash`, applicability,
+   source freshness and the existing action/measurement references. Store customer-specific evidence
+   only in its existing project scope. Propose generalized learnings through the canonical
+   `docs/GEO_KNOWLEDGE_BASE.md` lifecycle; never promote an observation or copy a corpus on sync alone.
 
 ## Output Shape
 
@@ -30,6 +34,7 @@ Evidence:
 Intelligence/Action link:
 Handoff state:
 Measurement state:
+Knowledge references (IDs/versions/corpus_hash):
 Verification:
 Open risks:
 Next action:

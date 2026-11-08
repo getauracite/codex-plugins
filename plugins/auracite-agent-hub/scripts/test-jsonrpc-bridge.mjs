@@ -3,14 +3,24 @@ import http from "node:http";
 import { once } from "node:events";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const pluginRoot = path.resolve(__dirname, "..");
 const bridgePath = path.join(pluginRoot, "bridge", "auracite_jsonrpc_bridge.mjs");
+// Synthetic remote schema: verify transparent forwarding without shipping a
+// second corpus or depending on the private monorepo in this public package.
+const canonicalFilterEnums = {
+  provider: ["google", "openai"],
+  surface: ["chatgpt_search", "google_ai_overviews"],
+  industry: ["ecommerce", "local_services"],
+  page_type: ["product", "service"]
+};
 
 const remoteRequests = [];
+const knowledgeTools = new Set(["search_geo_knowledge", "get_geo_knowledge"]);
 const remoteTools = [
   "list_projects",
   "get_visibility_kpis",
@@ -23,6 +33,8 @@ const remoteTools = [
   "get_gsc_trend",
   "get_ai_visibility_overview",
   "get_project_status",
+  "search_geo_knowledge",
+  "get_geo_knowledge",
   "get_agent_hub_timeline",
   "get_intelligence_freshness",
   "list_intelligence_refresh_candidates",
@@ -47,7 +59,12 @@ const remoteTools = [
 ].map((name) => ({
   name,
   description: `${name} from fake AuraCite`,
-  inputSchema: { type: "object", properties: {} }
+  inputSchema: {
+    type: "object",
+    properties: name === "search_geo_knowledge"
+      ? Object.fromEntries(Object.entries(canonicalFilterEnums).map(([field, values]) => [field, { type: "string", enum: values }]))
+      : {}
+  }
 }));
 
 const server = http.createServer(async (req, res) => {
@@ -70,17 +87,24 @@ const server = http.createServer(async (req, res) => {
     res.end(JSON.stringify({ jsonrpc: "2.0", id: body.id, ...payload }));
   };
 
-  if (req.headers["x-api-key"] !== "test-token") {
+  // The fake owner and customer tokens model the server-side discovery and
+  // call gates. A bridge allowlist must never synthesize a hidden owner tool.
+  const isOwner = req.headers["x-api-key"] === "test-token";
+  if (!isOwner && req.headers["x-api-key"] !== "customer-token") {
     respond({ error: { code: -32001, message: "Authentication failed" } });
     return;
   }
 
   if (body.method === "tools/list") {
-    respond({ result: { tools: remoteTools } });
+    respond({ result: { tools: remoteTools.filter((tool) => isOwner || !knowledgeTools.has(tool.name)) } });
     return;
   }
 
   if (body.method === "tools/call") {
+    if (knowledgeTools.has(body.params?.name) && !isOwner) {
+      respond({ error: { code: -32003, message: "Knowledge tool requires scope mcp:agentops:read and the owner gate" } });
+      return;
+    }
     if (body.params?.name === "get_visibility_kpis" && body.params?.arguments?.period === "1y") {
       respond({
         result: {
@@ -199,6 +223,14 @@ function createBridgeClient(extraEnv = {}) {
 }
 
 try {
+  const manifest = JSON.parse(await readFile(path.join(pluginRoot, ".mcp.json"), "utf8"));
+  for (const [transport, config] of Object.entries(manifest.mcpServers)) {
+    for (const tool of knowledgeTools) {
+      assert.equal(config.enabled_tools.filter((name) => name === tool).length, 1, `${transport} must declare ${tool} exactly once`);
+      assert.equal(config.disabled_tools.includes(tool), false, `${transport} must not contradict the knowledge allowlist`);
+    }
+  }
+
   {
     const client = createBridgeClient();
     const init = await client.request("initialize", {
@@ -210,6 +242,13 @@ try {
 
     const listed = await client.request("tools/list");
     const names = listed.result.tools.map((tool) => tool.name);
+    for (const name of knowledgeTools) {
+      assert.ok(names.includes(name), `${name} must pass through safe mode when the server authorizes it`);
+    }
+    const knowledgeSchema = listed.result.tools.find((tool) => tool.name === "search_geo_knowledge").inputSchema;
+    for (const [field, values] of Object.entries(canonicalFilterEnums)) {
+      assert.deepEqual(knowledgeSchema.properties[field].enum, values, `the bridge must preserve the synthetic remote ${field} taxonomy for discovery`);
+    }
     assert.ok(names.includes("get_visibility_kpis"), "read-only headline KPIs must be visible in safe mode");
     assert.ok(names.includes("get_intelligence_freshness"));
     assert.ok(names.includes("list_intelligence_refresh_candidates"));
@@ -249,6 +288,22 @@ try {
     const readBody = JSON.parse(read.result.content[0].text);
     assert.equal(readBody.proxied_tool, "list_project_memory_entries");
 
+    const searchArgs = {
+      query: "OAI-SearchBot", provider: "openai", surface: "chatgpt_search",
+      industry: "ecommerce", page_type: "product", locale: "de-DE", mode: "research", limit: 3
+    };
+    for (const [field, values] of Object.entries(canonicalFilterEnums)) {
+      assert.ok(values.includes(searchArgs[field]), `bridge search fixture ${field} must be accepted by the synthetic remote taxonomy`);
+    }
+    const getArgs = { id: "K013", mode: "research", expected_corpus_hash: `sha256:${"a".repeat(64)}` };
+    for (const [name, args] of [["search_geo_knowledge", searchArgs], ["get_geo_knowledge", getArgs]]) {
+      const response = await client.request("tools/call", { name, arguments: args });
+      assert.equal(response.error, undefined);
+      const body = JSON.parse(response.result.content[0].text);
+      assert.equal(body.proxied_tool, name);
+      assert.deepEqual(body.proxied_arguments, args, "knowledge context and revision pins must survive the stdio bridge unchanged");
+    }
+
     for (const period of ["7d", "30d", "90d"]) {
       const kpis = await client.request("tools/call", {
         name: "get_visibility_kpis",
@@ -282,6 +337,19 @@ try {
       arguments: { run_id: "run-1" }
     });
     assert.match(denied.error.message, /disabled by local bridge/i);
+    await client.close();
+  }
+
+  {
+    const client = createBridgeClient({ AURACITE_MCP_TOKEN: "customer-token" });
+    const listed = await client.request("tools/list");
+    const names = listed.result.tools.map((tool) => tool.name);
+    for (const name of knowledgeTools) {
+      assert.equal(names.includes(name), false, "a local allowlist must not expose a server-hidden internal tool");
+      const denied = await client.request("tools/call", { name, arguments: { id: "K013" } });
+      assert.match(denied.error.message, /mcp:agentops:read/);
+      assert.equal(denied.result, undefined, "server denial must never become a corpus answer");
+    }
     await client.close();
   }
 

@@ -27,7 +27,7 @@ Start with `mcp:read`. Confirmed writes and provider-spend workflows are not ena
 
 ## What the plugin can do
 
-Configured catalog: 43 operator tools, of which 32 are read/draft tools. Availability in an already-connected client depends on refreshing its tool catalog.
+Configured catalog: 45 configured tools, of which 34 are read/draft tools, including two private owner knowledge reads. Actual availability depends on the server, credential scopes and owner authorization. Availability in an already-connected client depends on refreshing its tool catalog.
 
 Reads (default, `mcp:read`):
 
@@ -37,6 +37,11 @@ Reads (default, `mcp:read`):
 - Google Search Console: query and per-page evidence, bounded country and device breakdowns, query trends.
 - AuraCite Intelligence: freshness, refresh candidates, refresh status, opportunity briefs, evidence summaries.
 - Action Center handoff state and compact project-memory snapshots.
+
+Shared owner knowledge:
+
+- Read the chosen canonical corpus through authorized private-repository access and use the shared CLI with `--corpus <file>` in a cloud workspace or local checkout. This path requires no Railway, AgentOps, backend service or local coding worker. Data updates do not require rebuilding an existing CLI binary.
+- Optional `search_geo_knowledge` and `get_geo_knowledge` access requires `mcp:agentops:read` plus the live owner gate. These tools are unavailable to ordinary customer `mcp:read` keys and must match the selected corpus hash. Pin `expected_corpus_hash`, retain card references and check freshness/applicability. Their rollout is independent of the direct knowledge-read path.
 
 Drafts (no production state changes):
 
@@ -105,7 +110,7 @@ node plugins/auracite-agent-hub/scripts/test-jsonrpc-bridge.mjs
 
 ## Changelog
 
-See [CHANGELOG.md](./CHANGELOG.md). Current version: 0.11.5.
+See [CHANGELOG.md](./CHANGELOG.md). Current version: 0.12.0.
 
 ## Support and legal
 
