@@ -184,7 +184,7 @@ async function handleRequest(message) {
           version: SERVER_VERSION
         },
         instructions:
-          "AuraCite Agent Hub bridge. Safe mode exposes read and draft tools. Set AURACITE_MCP_BRIDGE_MODE=confirmed-writes only for server-confirmed project/brand/prompt, memory, Action Center, and stored-rescore writes (mcp:write + pending approval + one-use quote + idempotency) and cost tools (mcp:spend + one-tap execution approval + max_credits/max_usd caps). Destructive, admin, credit-grant, demo-user, publishing, and raw Vault-file writes remain blocked."
+          "AuraCite Agent Hub bridge. Safe mode exposes read and draft tools. AURACITE_MCP_BRIDGE_MODE=confirmed-writes also exposes server-confirmed project/brand/prompt, memory, Action Center, and stored-rescore writes (mcp:write + pending approval + one-use quote + idempotency). Owner-requested save_geo_learning uses the live owner gate, mcp:write, request_key and expected_revision without an execution quote. Cost tools require mcp:spend, execution approval and max_credits/max_usd caps. Destructive, admin, credit-grant, demo-user, publishing, and raw Vault-file writes remain blocked."
       };
 
     case "ping":
