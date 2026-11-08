@@ -36,6 +36,7 @@ const SAFE_TOOL_NAMES = new Set([
   "list_action_handoffs",
   // Discovery and calls still require the remote owner and scope gates.
   "search_geo_knowledge",
+  "search_geo_learnings",
   "get_geo_knowledge",
   "list_project_memory_entries",
   "create_context_pack_draft",
@@ -44,6 +45,7 @@ const SAFE_TOOL_NAMES = new Set([
 ]);
 
 const CONFIRMED_WRITE_TOOL_NAMES = new Set([
+  "save_geo_learning",
   "create_project",
   "add_prompt",
   "add_brand",

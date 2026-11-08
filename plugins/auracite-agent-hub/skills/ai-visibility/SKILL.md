@@ -62,9 +62,17 @@ the global corpus or copy the corpus into project memory.
 
 ## Safety and scope
 
-- This skill is read-only. It must not trigger scans, ingestion, provider calls, publishing, or credit
-  spend speculatively.
+- Analysis is read-only. The explicit owner-requested learning capture below is the only write
+  exception. Never trigger scans, ingestion, provider calls, publishing, or credit spend speculatively.
 - OAuth or API-key scope binds tenant/project/user server-side; never infer scope from user-visible
   labels or accept caller-supplied scope as authoritative.
 - GSC and the combined overview read stored data. If data is stale or missing, report that limitation
   and draft a refresh plan instead of triggering a refresh.
+
+## Direct learning capture across sessions
+
+On an explicit request to remember or update a GEO learning, use `search_geo_learnings` first to find an existing entry. This live owner-only inbox complements the curated corpus; it is not a replacement for reviewed cards or a task/CRM ledger. No credentials or private customer data belong here.
+
+Use `save_geo_learning` with a stable UUID, `expected_revision` (0 for creation), title, body, source/session reference, status `unreviewed`, and a fresh request_key. Updates reuse the ID and latest revision; retries reuse the identical request and key. A revision conflict requires a fresh read and reconciliation, never a blind overwrite. Saving cannot mark evidence validated. Archive with status `archived`; history is retained.
+
+Read the ID back with `search_geo_learnings` before claiming success. Report ID and revision. New sessions search this inbox alongside `search_geo_knowledge`/the canonical CLI. Unreviewed observations stay unreviewed; archived entries are not active advice. Changes are immediately visible without deployment. A read-only connection cannot save: report the missing write scope, never substitute a local note and claim shared persistence.
