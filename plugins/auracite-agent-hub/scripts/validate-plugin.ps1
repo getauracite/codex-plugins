@@ -55,7 +55,7 @@ $manifest = Get-Content -Raw -LiteralPath $manifestPath | ConvertFrom-Json
 if ($manifest.name -ne 'auracite-agent-hub') {
   throw "Unexpected plugin name: $($manifest.name)"
 }
-if ($manifest.version -ne '0.12.0') {
+if ($manifest.version -ne '0.13.0') {
   throw "Unexpected plugin version: $($manifest.version)"
 }
 if (@($manifest.interface.defaultPrompt).Count -ne 3) {
@@ -82,8 +82,8 @@ if ($null -eq $mcpServers) {
   throw '.mcp.json must use top-level mcpServers object.'
 }
 $enabledTools = @($mcpServers.auracite.enabled_tools)
-$expectedProductionReadToolCount = 34
-$expectedProductionOperatorToolCount = 45
+$expectedProductionReadToolCount = 35
+$expectedProductionOperatorToolCount = 47
 if ($enabledTools.Count -ne $expectedProductionOperatorToolCount) {
   throw "Hosted enabled_tools must match the configured operator surface ($expectedProductionOperatorToolCount), found $($enabledTools.Count)."
 }
@@ -125,6 +125,8 @@ $requiredTools = @(
   'list_action_handoffs',
   'search_geo_knowledge',
   'get_geo_knowledge',
+  'search_geo_learnings',
+  'save_geo_learning',
   'list_project_memory_entries',
   'create_context_pack_draft',
   'create_action_handoff_draft',
