@@ -25,9 +25,13 @@ The hosted MCP entry points to `https://auracite.de/mcp/rpc` (Streamable HTTP, J
 
 Start with `mcp:read`. Confirmed writes and provider-spend workflows are not enabled by default.
 
+## Customer overview
+
+Ask for your visibility overview. `render_visibility_overview` displays stored KPIs, their measurement basis and one diagnostic next step. `get_customer_guidance` adds current, customer-approved knowledge with sources and limits. Compatible MCP Apps hosts render an interactive view; text-only hosts receive the same data. Owner-only knowledge and private learnings remain restricted. Backend rollout and a refreshed client catalog are required.
+
 ## What the plugin can do
 
-Configured catalog: 45 configured tools, of which 34 are read/draft tools, including two private owner knowledge reads. Actual availability depends on the server, credential scopes and owner authorization. Availability in an already-connected client depends on refreshing its tool catalog.
+Configured catalog: 49 tools, of which 37 are read/draft tools. Actual availability depends on the server, credential scopes and owner authorization. Existing clients need a refreshed catalog. Internal project snapshots remain excluded from this public package.
 
 Reads (default, `mcp:read`):
 
@@ -110,7 +114,7 @@ node plugins/auracite-agent-hub/scripts/test-jsonrpc-bridge.mjs
 
 ## Changelog
 
-See [CHANGELOG.md](./CHANGELOG.md). Current version: 0.12.0.
+See [CHANGELOG.md](./CHANGELOG.md). Current version: 0.14.0.
 
 ## Support and legal
 

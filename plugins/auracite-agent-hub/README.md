@@ -31,13 +31,19 @@ Codex discovers AuraCite OAuth metadata, opens the browser, and asks you to sign
 
 Start with `mcp:read`. Add `mcp:write` for project, brand, prompt, memory, Action Center, and stored-rescore operations. Add `mcp:spend` only when provider scans or AI prompt generation are needed.
 
+## Customer overview
+
+Version 0.14.0 adds `render_visibility_overview`: stored KPIs, measurement basis and one diagnostic next step. `get_customer_guidance` provides current customer-approved knowledge with sources and applicability limits. Compatible MCP Apps hosts render an interactive view; text-only hosts receive the same data. Reconnect after updating to refresh tools and skills. Opening the overview starts no provider scan or credit spend.
+
+The public package configures 49 tools, of which 37 are read/draft tools. Internal project snapshots stay excluded. The UI is served by AuraCite; no private knowledge corpus is bundled.
+
 ## What The Plugin Can Do
 
 Version 0.12.0 adds optional owner-only `search_geo_knowledge` and `get_geo_knowledge` reads. They require `mcp:agentops:read` plus the server's live owner check. The shared CLI can instead read the canonical corpus from an authorized repository checkout with `--corpus`, without Railway or a running backend. Retain card IDs, sources, applicability, freshness and the pinned corpus hash. Hypotheses remain research-only.
 
 - Read evidence-grade AI visibility KPIs via `get_visibility_kpis` (`7d`/`30d`/`90d`): visibility, recommendation rate, and share of voice, each `measured` or `not_available` with period, `data_as_of`, numerator/denominator, and explicit reasons. Branded prompts stay separate under `brand_control`.
 - Read further AI visibility signals for brands, mentions, citations, competitors, share of voice, visibility score, trends, and per-engine breakdowns.
-- Read project discovery, user-landscape summaries, recent signups, Google Search Console query/page
+- Read project discovery and Google Search Console query/page
   evidence, bounded country/device breakdowns, query trends, and the combined AI-visibility overview.
 - Read AuraCite Intelligence context: freshness, refresh candidates, refresh status, opportunity briefs, and evidence summaries.
 - Read Action Center handoff state and compact project-memory snapshots.

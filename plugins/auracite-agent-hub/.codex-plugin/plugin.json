@@ -1,6 +1,6 @@
 {
   "name": "auracite-agent-hub",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "Connect Codex to AuraCite AI Visibility Intelligence, Google Search Console evidence, project operations, approved writes, spend-capped workflows, and enterprise-safe agent operating rules.",
   "author": {
     "name": "AuraCite",
@@ -36,7 +36,7 @@
     "composerIcon": "./assets/icon.svg",
     "logo": "./assets/logo.svg",
     "defaultPrompt": [
-      "Compare my AI visibility evidence with Google Search Console performance.",
+      "Show my AuraCite visibility dashboard and explain the next step using approved knowledge.",
       "Review AuraCite Intelligence opportunities and prepare a gated Action Center handoff draft.",
       "Build an AuraCite Context Pack from Intelligence evidence and project memory."
     ],

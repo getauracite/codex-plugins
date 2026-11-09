@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.14.0 - 2026-11-09
+
+- Add `render_visibility_overview`: stored visibility KPIs, measurement basis and one diagnostic next step in compatible MCP Apps hosts, with the same data available as text.
+- Add `get_customer_guidance`: current, explicitly customer-approved knowledge with source, applicability and review limits. Private owner knowledge and learnings remain restricted.
+- Update the two analysis skills to ground suggestions in customer evidence and approved knowledge. Opening the dashboard starts no provider scan or credit spend.
+- 49 configured tools, 37 read/draft tools. Preserve exclusion of the four internal project snapshot tools. The UI is served by AuraCite; no private corpus is bundled.
+- Restart or reconnect clients after updating to load the new tools and skills.
+
 ## v0.12.0 - 2026-11-08
 
 - Add optional owner-only `search_geo_knowledge` and `get_geo_knowledge` reads, preserving the server's scope and owner gates.
