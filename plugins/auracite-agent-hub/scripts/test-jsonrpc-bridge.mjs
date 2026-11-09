@@ -24,6 +24,8 @@ const knowledgeTools = new Set(["search_geo_knowledge", "get_geo_knowledge"]);
 const remoteTools = [
   "list_projects",
   "get_visibility_kpis",
+  "render_visibility_overview",
+  "get_customer_guidance",
   "summarize_user_landscape",
   "list_recent_signups",
   "get_gsc_search_analytics",
@@ -250,6 +252,12 @@ try {
       assert.deepEqual(knowledgeSchema.properties[field].enum, values, `the bridge must preserve the synthetic remote ${field} taxonomy for discovery`);
     }
     assert.ok(names.includes("get_visibility_kpis"), "read-only headline KPIs must be visible in safe mode");
+    for (const name of ["render_visibility_overview", "get_customer_guidance"]) {
+      assert.ok(names.includes(name), `${name} must be visible in safe mode`);
+      const response = await client.request("tools/call", { name, arguments: { query: "OAI-SearchBot", surface: "chatgpt_search" } });
+      assert.equal(response.error, undefined);
+      assert.equal(JSON.parse(response.result.content[0].text).proxied_tool, name);
+    }
     assert.ok(names.includes("get_intelligence_freshness"));
     assert.ok(names.includes("list_intelligence_refresh_candidates"));
     assert.ok(names.includes("create_intelligence_refresh_plan_draft"));

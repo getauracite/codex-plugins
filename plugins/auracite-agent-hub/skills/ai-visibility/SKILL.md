@@ -27,6 +27,37 @@ answer tied to returned data; do not invent engine, query, citation, or competit
 
 ## Working pattern
 
+### Customer overview and guidance
+
+For a customer's visibility overview, call `render_visibility_overview` with the
+verified project and requested `7d`/`30d`/`90d` period (default `30d`). It reads the
+stored metrics itself and returns an optional dashboard plus identical structured
+data for text-only clients. Do not rebuild or invent the metrics in HTML. Explain
+the most relevant returned limitation and one next step; do not repeat the whole
+dashboard in prose. Short follow-up questions do not need another render.
+
+Before a substantive GEO suggestion, call `get_customer_guidance` with a concrete
+question and the actually known surface, industry and page type. Do not infer
+`chatgpt_search` from a generic provider name. Preserve sources, conditions,
+caveats, card ID/revision and corpus hash. Reuse `expected_corpus_hash` within one
+analysis; on a mismatch retrieve and reassess, never combine revisions silently.
+Use the same query/context when rendering the supporting knowledge in the overview.
+
+The customer tools expose only editorially approved, currently actionable cards.
+Do not request owner scopes, private repository access, owner knowledge tools or
+owner learnings to fill a customer's knowledge gap. `knowledge_gap` or
+`insufficient_context` requires an honest limitation or a targeted question, never
+a fabricated AuraCite recommendation. A documentation rule is not a measured
+customer defect or a promise of uplift. Missing data is not zero.
+
+For an investigation, inspect stored answers and source evidence before alleging
+a website problem. Keep measured facts, knowledge, interpretation and test ideas
+separate. No scan, publishing, account change or credit spend follows from opening
+the dashboard. If the client cannot display UI, summarize the same returned
+metrics, their bases, date, limitation and next step in readable text.
+
+### Existing detailed analysis
+
 1. Identify the intended brand/project with `list_brands` and `list_projects`.
 2. Start with `get_visibility_kpis` (period `7d`, `30d`, or `90d`). Preserve each metric's `status`, numerator/denominator, period, and `data_as_of`. A `not_available` metric is not zero. Keep `brand_control` separate from non-brand `buyer_discovery` rates. Use `get_dashboard_stats` for additional legacy dashboard context.
 3. Drill into mentions, citations, engine breakdown, competitors, GSC queries/pages, or trends.
